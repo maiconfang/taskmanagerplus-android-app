@@ -1,4 +1,4 @@
-
+```markdown
 # TaskManagerPlus Android App
 
 ## Overview
@@ -12,7 +12,7 @@
 - Kotlin-based architecture with MVVM pattern.
 
 ## Project Structure
-bash
+```bash
 /taskmanagerplus-android-app
 │
 ├── /app/                     # Source code for the Android application
@@ -25,14 +25,14 @@ bash
 ├── README.md                 # Project overview and setup instructions
 ├── LICENSE                   # License for the project
 └── build.gradle              # Gradle configuration file for the project
-
+```
 
 ## Installation and Setup
 1. Clone the repository:
-    bash
-    git clone https://github.com/maiconfang/taskmanagerplus-android-app.git
+    ```bash
+    git clone https://github.com/yourusername/taskmanagerplus-android-app.git
     cd taskmanagerplus-android-app
-    
+    ```
 
 2. Open the project in **Android Studio**.
 
@@ -61,4 +61,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **TaskManagerPlus Android App** is part of the TaskManagerPlus series, developed to explore various approaches and technologies for task management applications.
-
+```
