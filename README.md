@@ -1,4 +1,4 @@
-```markdown
+
 # TaskManagerPlus Android App
 
 ## Overview
