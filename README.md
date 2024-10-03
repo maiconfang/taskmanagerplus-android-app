@@ -61,4 +61,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **TaskManagerPlus Android App** is part of the TaskManagerPlus series, developed to explore various approaches and technologies for task management applications.
-```
