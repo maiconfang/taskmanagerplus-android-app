@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "gmta.gethugo.taskmanagerplus"
+    namespace = "maif.taskmanagerplus"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "gmta.gethugo.taskmanagerplus"
+        applicationId = "maif.taskmanagerplus"
         minSdk = 33
         targetSdk = 34
         versionCode = 1
