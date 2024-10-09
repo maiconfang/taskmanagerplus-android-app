@@ -2,6 +2,8 @@ package maif.taskmanagerplus.ui.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
@@ -92,7 +94,18 @@ class TaskDashboardActivity : AppCompatActivity() {
 
         if (filteredList.isEmpty()) {
             // Show a "No tasks found" message
-            Toast.makeText(this, "No tasks found", Toast.LENGTH_SHORT).show()
+            val text = "No tasks found"
+            val duration = Toast.LENGTH_SHORT
+
+            val toast = Toast.makeText(this, text, duration) // in Activity
+            toast.show()
+
+            // Create a Handler to dismiss the toast after a specific delay
+            Handler(Looper.getMainLooper()).postDelayed({
+                toast.cancel() // Cancel the toast after 2 seconds
+            }, 2000) // 2000 milliseconds
+
+            adapter.updateTaskList(emptyList()) // Clear the list in the adapter
         } else {
             // Update the adapter with the filtered list
             adapter.updateTaskList(filteredList)
