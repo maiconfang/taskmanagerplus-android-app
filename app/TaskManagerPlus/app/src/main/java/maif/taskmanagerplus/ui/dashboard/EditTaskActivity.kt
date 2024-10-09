@@ -1,5 +1,6 @@
 package maif.taskmanagerplus.ui.dashboard
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
@@ -22,6 +23,7 @@ class EditTaskActivity : AppCompatActivity() {
         val taskTitle = intent.getStringExtra("TASK_TITLE")
         val taskDescription = intent.getStringExtra("TASK_DESCRIPTION")
         val taskStatus = intent.getBooleanExtra("TASK_STATUS", false)
+        val taskPosition = intent.getIntExtra("TASK_POSITION", -1) // Recebe a posição da tarefa
 
         // Pre-fill the fields with the current task data
         titleEditText.setText(taskTitle)
@@ -29,18 +31,21 @@ class EditTaskActivity : AppCompatActivity() {
         completedCheckBox.isChecked = taskStatus
 
         saveButton.setOnClickListener {
-            // Save the updated task data and return to the previous screen
             val updatedTitle = titleEditText.text.toString()
             val updatedDescription = descriptionEditText.text.toString()
             val updatedStatus = completedCheckBox.isChecked
+            val taskId = intent.getIntExtra("TASK_ID", -1) // Pegue o ID da tarefa
 
-            val resultIntent = intent
-            resultIntent.putExtra("UPDATED_TITLE", updatedTitle)
-            resultIntent.putExtra("UPDATED_DESCRIPTION", updatedDescription)
-            resultIntent.putExtra("UPDATED_STATUS", updatedStatus)
-
+            val resultIntent = Intent().apply {
+                putExtra("UPDATED_TITLE", updatedTitle)
+                putExtra("UPDATED_DESCRIPTION", updatedDescription)
+                putExtra("UPDATED_STATUS", updatedStatus)
+                putExtra("TASK_POSITION", taskPosition)
+                putExtra("TASK_ID", taskId) // Envie o ID da tarefa de volta
+            }
             setResult(RESULT_OK, resultIntent)
-            finish() // Close the activity and return to the previous one
+            finish()
         }
+
     }
 }

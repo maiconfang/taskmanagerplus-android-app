@@ -1,7 +1,6 @@
 package maif.taskmanagerplus.ui.dashboard
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import maif.taskmanagerplus.R
-import maif.taskmanagerplus.model.Task
+import maif.taskmanagerplus.data.model.Task
 
 class TaskDashboardAdapter(
     private var tasks: MutableList<Task>, // MutableList to allow task modifications
@@ -34,7 +33,7 @@ class TaskDashboardAdapter(
         // Handle delete button click with confirmation
         holder.deleteButton.setOnClickListener {
             AlertDialog.Builder(holder.itemView.context)
-                .setTitle("Delete Task")
+                .setTitle("Delete maif.taskmanagerplus.data.model.Task")
                 .setMessage("Are you sure you want to delete this task?")
                 .setPositiveButton("Delete") { _, _ ->
                     removeTask(position) // Remove task from list upon confirmation
@@ -74,7 +73,8 @@ class TaskDashboardAdapter(
 
             // Set the task details in the view
             titleTextView.text = task.title
-            statusTextView.text = if (task.isCompleted) "Completed" else "Pending"
+            statusTextView.text = if (task.status == "Completed") "Completed" else "Pending"
+
         }
     }
 }

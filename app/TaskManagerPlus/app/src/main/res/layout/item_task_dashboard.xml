@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- Task Title -->
+    <!-- maif.taskmanagerplus.data.model.Task Title -->
     <TextView
         android:id="@+id/tv_task_title"
         android:layout_width="0dp"
@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toStartOf="@id/tv_task_status"
         android:layout_margin="8dp" />
 
-    <!-- Task Status -->
+    <!-- maif.taskmanagerplus.data.model.Task Status -->
     <TextView
         android:id="@+id/tv_task_status"
         android:layout_width="wrap_content"
