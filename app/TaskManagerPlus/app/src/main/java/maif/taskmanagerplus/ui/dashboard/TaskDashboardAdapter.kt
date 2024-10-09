@@ -1,6 +1,7 @@
 package maif.taskmanagerplus.ui.dashboard
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,8 @@ import maif.taskmanagerplus.model.Task
 
 class TaskDashboardAdapter(
     private var tasks: MutableList<Task>, // MutableList to allow task modifications
-    private val onTaskClick: (Task) -> Unit // Lambda to handle task click for detail view
+    private val onTaskClick: (Task) -> Unit, // Lambda to handle task click for detail view
+    private val onEditTask: (Task, Int) -> Unit // Lambda to handle task edit click
 ) : RecyclerView.Adapter<TaskDashboardAdapter.TaskViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -40,6 +42,11 @@ class TaskDashboardAdapter(
                 .setNegativeButton("Cancel", null)
                 .show()
         }
+
+        // Handle edit button click to open EditTaskActivity
+        holder.editButton.setOnClickListener {
+            onEditTask(task, position) // Trigger the edit callback to launch edit activity
+        }
     }
 
     override fun getItemCount(): Int = tasks.size
@@ -59,20 +66,15 @@ class TaskDashboardAdapter(
 
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val deleteButton: ImageButton = itemView.findViewById(R.id.btn_delete_task)
+        val editButton: ImageButton = itemView.findViewById(R.id.btn_edit_task)
 
         fun bind(task: Task) {
             val titleTextView = itemView.findViewById<TextView>(R.id.tv_task_title)
             val statusTextView = itemView.findViewById<TextView>(R.id.tv_task_status)
-            val editButton = itemView.findViewById<ImageButton>(R.id.btn_edit_task)
 
             // Set the task details in the view
             titleTextView.text = task.title
             statusTextView.text = if (task.isCompleted) "Completed" else "Pending"
-
-            // Handle edit button click (this can be customized further)
-            editButton.setOnClickListener {
-                // Logic to edit the task can be implemented here
-            }
         }
     }
 }

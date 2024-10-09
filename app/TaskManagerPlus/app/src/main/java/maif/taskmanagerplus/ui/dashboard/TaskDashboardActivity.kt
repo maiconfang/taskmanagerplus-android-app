@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -34,6 +35,24 @@ class TaskDashboardActivity : AppCompatActivity() {
 
     private lateinit var adapter: TaskDashboardAdapter
 
+    // Register for activity result to handle the edited task
+    private val editTaskLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val updatedTitle = result.data?.getStringExtra("UPDATED_TITLE") ?: return@registerForActivityResult
+            val updatedDescription = result.data?.getStringExtra("UPDATED_DESCRIPTION") ?: return@registerForActivityResult
+            val updatedStatus = result.data?.getBooleanExtra("UPDATED_STATUS", false) ?: return@registerForActivityResult
+
+            val position = result.data?.getIntExtra("TASK_POSITION", -1) ?: return@registerForActivityResult
+            if (position != -1) {
+                val updatedTask = Task(updatedTitle, updatedDescription, updatedStatus)
+                taskList[position] = updatedTask
+                adapter.notifyItemChanged(position) // Update the specific item in RecyclerView
+            }
+        }
+    }
+
     companion object {
         const val ADD_TASK_REQUEST_CODE = 1
     }
@@ -55,14 +74,26 @@ class TaskDashboardActivity : AppCompatActivity() {
 
         // Show only pending tasks initially
         val pendingTasks = taskList.filter { !it.isCompleted }.toMutableList()
-        adapter = TaskDashboardAdapter(pendingTasks) { task ->
-            val intent = Intent(this, TaskDashboardDetailActivity::class.java).apply {
-                putExtra("TASK_TITLE", task.title)
-                putExtra("TASK_DESCRIPTION", task.description)
-                putExtra("TASK_STATUS", task.isCompleted)
+
+        adapter = TaskDashboardAdapter(pendingTasks,
+            onTaskClick = { task ->
+                val intent = Intent(this, TaskDashboardDetailActivity::class.java).apply {
+                    putExtra("TASK_TITLE", task.title)
+                    putExtra("TASK_DESCRIPTION", task.description)
+                    putExtra("TASK_STATUS", task.isCompleted)
+                }
+                startActivity(intent)
+            },
+            onEditTask = { task, position ->
+                val intent = Intent(this, EditTaskActivity::class.java).apply {
+                    putExtra("TASK_TITLE", task.title)
+                    putExtra("TASK_DESCRIPTION", task.description)
+                    putExtra("TASK_STATUS", task.isCompleted)
+                    putExtra("TASK_POSITION", position)
+                }
+                editTaskLauncher.launch(intent)
             }
-            startActivity(intent)
-        }
+        )
         recyclerView.adapter = adapter
 
         // Handle search input dynamically
