@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import maif.taskmanagerplus.R
 import maif.taskmanagerplus.model.Task
 
-class TaskDashboardAdapter(private var tasks: List<Task>) : RecyclerView.Adapter<TaskDashboardAdapter.TaskViewHolder>() {
+class TaskDashboardAdapter(
+    private var tasks: List<Task>,
+    private val onTaskClick: (Task) -> Unit // Lambda to handle task click
+) : RecyclerView.Adapter<TaskDashboardAdapter.TaskViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task_dashboard, parent, false)
@@ -19,6 +22,10 @@ class TaskDashboardAdapter(private var tasks: List<Task>) : RecyclerView.Adapter
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
         holder.bind(task)
+        // Handle the click event to trigger the task detail view
+        holder.itemView.setOnClickListener {
+            onTaskClick(task)
+        }
     }
 
     override fun getItemCount(): Int = tasks.size
@@ -32,12 +39,13 @@ class TaskDashboardAdapter(private var tasks: List<Task>) : RecyclerView.Adapter
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(task: Task) {
             val titleTextView = itemView.findViewById<TextView>(R.id.tv_task_title)
-            val descriptionTextView = itemView.findViewById<TextView>(R.id.tv_task_description)
+            val statusTextView = itemView.findViewById<TextView>(R.id.tv_task_status)
             val editButton = itemView.findViewById<ImageButton>(R.id.btn_edit_task)
             val deleteButton = itemView.findViewById<ImageButton>(R.id.btn_delete_task)
 
+            // Set the task details in the view
             titleTextView.text = task.title
-            descriptionTextView.text = task.description
+            statusTextView.text = if (task.isCompleted) "Completed" else "Pending"
 
             // Handle edit button click
             editButton.setOnClickListener {
