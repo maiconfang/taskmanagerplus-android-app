@@ -45,7 +45,7 @@ class TaskDashboardActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this) // Set layout manager
 
         // Show only pending tasks initially
-        val pendingTasks = taskList.filter { !it.isCompleted }
+        val pendingTasks = taskList.filter { !it.isCompleted }.toMutableList() // Converts to MutableList
 
         val adapter = TaskDashboardAdapter(pendingTasks) { task ->
             val intent = Intent(this, TaskDashboardDetailActivity::class.java).apply {
