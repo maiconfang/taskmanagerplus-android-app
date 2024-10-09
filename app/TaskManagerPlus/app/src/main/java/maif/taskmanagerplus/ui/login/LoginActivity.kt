@@ -17,6 +17,7 @@ import maif.taskmanagerplus.MainActivity
 import maif.taskmanagerplus.databinding.ActivityLoginBinding
 
 import maif.taskmanagerplus.R
+import maif.taskmanagerplus.ui.dashboard.TaskDashboardActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -110,8 +111,13 @@ class LoginActivity : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
 
-        // Navigate to MainActivity after successful login
-        val intent = Intent(this, MainActivity::class.java)
+//        // Navigate to MainActivity after successful login
+//        val intent = Intent(this, MainActivity::class.java)
+//        startActivity(intent)
+//        finish() // Close the login screen
+
+        // Navigate to TaskDashboard after successful login
+        val intent = Intent(this, TaskDashboardActivity::class.java)
         startActivity(intent)
         finish() // Close the login screen
     }
