@@ -129,3 +129,21 @@ This use case describes how a user filters tasks based on their status (complete
 ### 6.4 Main Flow
 1. The user selects a filter option (e.g., "Completed" or "Pending").
 2. The system updates the task list to display only the tasks that match the selected filter.
+
+
+## 7. Use Case: View Task Details
+
+### 7.1 Description
+This use case describes how a user views detailed information about a task.
+
+### 7.2 Actors
+- **Primary Actor**: User
+
+### 7.3 Preconditions
+- The user must be logged in.
+- The user must have tasks in the task list.
+
+### 7.4 Main Flow
+1. The user selects a task from the task list.
+2. The system displays the task title, description, and status (completed or pending) in a new screen.
+

@@ -19,6 +19,9 @@ class TaskDashboardActivity : AppCompatActivity() {
 
     // Simulated task list with completion status
     private val taskList = listOf(
+        Task("Update the October monthly expense spreadsheet",
+            "Check the receipts and payment confirmation, review the credit card, ask Luana if there are more expenses I should include",
+            isCompleted = false),
         Task("Title 1", "Description 1", isCompleted = true),
         Task("Title 2", "Description 2", isCompleted = false),
         Task("Title 3", "Description 3", isCompleted = true)
@@ -35,10 +38,14 @@ class TaskDashboardActivity : AppCompatActivity() {
             insets
         }
 
-// RecyclerView setup
+        // RecyclerView setup
         val recyclerView = findViewById<RecyclerView>(R.id.rv_task_list)
         recyclerView.layoutManager = LinearLayoutManager(this) // Set layout manager
-        val adapter = TaskDashboardAdapter(taskList) { task ->
+
+        // Show only pending tasks initially
+        val pendingTasks = taskList.filter { !it.isCompleted }
+
+        val adapter = TaskDashboardAdapter(pendingTasks) { task ->
             val intent = Intent(this, TaskDashboardDetailActivity::class.java).apply {
                 putExtra("TASK_TITLE", task.title)
                 putExtra("TASK_DESCRIPTION", task.description)
@@ -52,6 +59,10 @@ class TaskDashboardActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.et_search_task)
         val completedCheckBox = findViewById<CheckBox>(R.id.cb_completed)
         val pendingCheckBox = findViewById<CheckBox>(R.id.cb_pending)
+
+        // Set the initial state of the checkboxes
+        completedCheckBox.isChecked = false // Uncheck Completed
+        pendingCheckBox.isChecked = true // Check Pending
 
         searchEditText.afterTextChanged { searchText ->
             filterTaskList(searchText, completedCheckBox.isChecked, pendingCheckBox.isChecked, adapter)
@@ -81,7 +92,6 @@ class TaskDashboardActivity : AppCompatActivity() {
 
         if (filteredList.isEmpty()) {
             // Show a "No tasks found" message
-            // You can use a Toast or a TextView to display the message
             Toast.makeText(this, "No tasks found", Toast.LENGTH_SHORT).show()
         } else {
             // Update the adapter with the filtered list

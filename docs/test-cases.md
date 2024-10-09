@@ -171,3 +171,27 @@
 ### 7.6 Postconditions
 - The task list updates based on the selected filter.
 
+
+
+## 8. Test Case: View Task Details
+
+### 8.1 Test Case ID
+- TC008
+
+### 8.2 Description
+- This test case verifies that the user can view detailed information about a task by clicking on it.
+
+### 8.3 Preconditions
+- The user is logged in.
+- There is at least one task in the task list.
+
+### 8.4 Test Steps
+1. Select an existing task from the list.
+2. Click the task to view its details.
+
+### 8.5 Expected Result
+- The system displays the task title, description, and status (completed or pending) in the detail screen.
+
+### 8.6 Postconditions
+- The task details are displayed correctly.
+

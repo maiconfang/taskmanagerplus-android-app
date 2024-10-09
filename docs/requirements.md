@@ -19,8 +19,8 @@
   - "Save" button
 - The task list should display:
   - Task title
-  - Task description (if available)
   - Status (e.g., completed or pending)
+- Users can click on a task to view detailed information, including the task description and status.
 - Users must be able to mark tasks as completed or pending.
 
 ### 1.3 Task Persistence
