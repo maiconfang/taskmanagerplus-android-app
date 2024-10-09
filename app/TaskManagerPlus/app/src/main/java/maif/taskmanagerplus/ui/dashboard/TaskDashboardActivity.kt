@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,14 +21,22 @@ import maif.taskmanagerplus.ui.login.afterTextChanged
 class TaskDashboardActivity : AppCompatActivity() {
 
     // Simulated task list with completion status
-    private val taskList = listOf(
-        Task("Update the October monthly expense spreadsheet",
+    private val taskList = mutableListOf(
+        Task(
+            "Update the October monthly expense spreadsheet",
             "Check the receipts and payment confirmation, review the credit card, ask Luana if there are more expenses I should include",
-            isCompleted = false),
+            isCompleted = false
+        ),
         Task("Title 1", "Description 1", isCompleted = true),
         Task("Title 2", "Description 2", isCompleted = false),
         Task("Title 3", "Description 3", isCompleted = true)
     )
+
+    private lateinit var adapter: TaskDashboardAdapter
+
+    companion object {
+        const val ADD_TASK_REQUEST_CODE = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +51,11 @@ class TaskDashboardActivity : AppCompatActivity() {
 
         // RecyclerView setup
         val recyclerView = findViewById<RecyclerView>(R.id.rv_task_list)
-        recyclerView.layoutManager = LinearLayoutManager(this) // Set layout manager
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Show only pending tasks initially
-        val pendingTasks = taskList.filter { !it.isCompleted }.toMutableList() // Converts to MutableList
-
-        val adapter = TaskDashboardAdapter(pendingTasks) { task ->
+        val pendingTasks = taskList.filter { !it.isCompleted }.toMutableList()
+        adapter = TaskDashboardAdapter(pendingTasks) { task ->
             val intent = Intent(this, TaskDashboardDetailActivity::class.java).apply {
                 putExtra("TASK_TITLE", task.title)
                 putExtra("TASK_DESCRIPTION", task.description)
@@ -79,6 +87,26 @@ class TaskDashboardActivity : AppCompatActivity() {
             filterTaskList(searchEditText.text.toString(), completedCheckBox.isChecked, pendingCheckBox.isChecked, adapter)
         }
 
+        // Button to add new task
+        val addTaskButton = findViewById<ImageButton>(R.id.btn_add_task)
+        addTaskButton.setOnClickListener {
+            val intent = Intent(this, AddTaskActivity::class.java)
+            startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
+        }
+    }
+
+    // Handle result from AddTaskActivity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == RESULT_OK) {
+            val newTaskTitle = data?.getStringExtra("TASK_TITLE") ?: ""
+            val newTaskDescription = data?.getStringExtra("TASK_DESCRIPTION") ?: ""
+            val isCompleted = data?.getBooleanExtra("TASK_STATUS", false) ?: false
+
+            val newTask = Task(newTaskTitle, newTaskDescription, isCompleted)
+            taskList.add(newTask) // Add new task to list
+            filterTaskList("", false, true, adapter) // Update list showing pending tasks by default
+        }
     }
 
     private fun filterTaskList(
@@ -93,25 +121,17 @@ class TaskDashboardActivity : AppCompatActivity() {
         }
 
         if (filteredList.isEmpty()) {
-            // Show a "No tasks found" message
             val text = "No tasks found"
-            val duration = Toast.LENGTH_SHORT
-
-            val toast = Toast.makeText(this, text, duration) // in Activity
+            val toast = Toast.makeText(this, text, Toast.LENGTH_SHORT)
             toast.show()
 
-            // Create a Handler to dismiss the toast after a specific delay
             Handler(Looper.getMainLooper()).postDelayed({
-                toast.cancel() // Cancel the toast after 2 seconds
-            }, 2000) // 2000 milliseconds
+                toast.cancel()
+            }, 2000)
 
-            adapter.updateTaskList(emptyList()) // Clear the list in the adapter
+            adapter.updateTaskList(emptyList())
         } else {
-            // Update the adapter with the filtered list
             adapter.updateTaskList(filteredList)
         }
-
     }
-
-
 }
