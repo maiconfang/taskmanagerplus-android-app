@@ -21,5 +21,10 @@
             android:id="@+id/nav_task_dashboard"
             android:icon="@drawable/baseline_task_24"
             android:title="Task Dashboard" />
+
+        <item
+            android:id="@+id/nav_overview_ask"
+            android:icon="@drawable/alarm_24"
+            android:title="Task Overviewww " />
     </group>
 </menu>

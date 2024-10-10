@@ -112,14 +112,14 @@ class LoginActivity : AppCompatActivity() {
         ).show()
 
 //        // Navigate to MainActivity after successful login
-//        val intent = Intent(this, MainActivity::class.java)
-//        startActivity(intent)
-//        finish() // Close the login screen
-
-        // Navigate to TaskDashboard after successful login
-        val intent = Intent(this, TaskDashboardActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish() // Close the login screen
+
+        // Navigate to TaskDashboard after successful login
+//        val intent = Intent(this, TaskDashboardActivity::class.java)
+//        startActivity(intent)
+//        finish() // Close the login screen
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

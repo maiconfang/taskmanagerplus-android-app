@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.fragment.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,4 +72,11 @@ dependencies {
     implementation("androidx.room:room-guava:$room_version")
     testImplementation("androidx.room:room-testing:$room_version")
     implementation("androidx.room:room-paging:$room_version")
+
+    val activity_version = "1.9.2"
+
+    // Java language implementation
+    implementation("androidx.activity:activity:$activity_version")
+    // Kotlin
+    implementation("androidx.activity:activity-ktx:$activity_version")
 }

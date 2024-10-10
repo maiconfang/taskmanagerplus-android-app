@@ -9,12 +9,15 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import maif.taskmanagerplus.R
@@ -27,8 +30,11 @@ class TaskDashboardActivity : AppCompatActivity() {
 
     private lateinit var adapter: TaskDashboardAdapter
     private lateinit var taskRepository: TaskRepository
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView
+    private lateinit var toggle: ActionBarDrawerToggle
 
-    // Register for activity result to handle adding a new task
+    // Register for adding a new task
     private val addTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -46,12 +52,12 @@ class TaskDashboardActivity : AppCompatActivity() {
             // Insert the new task within a coroutine
             lifecycleScope.launch(Dispatchers.IO) {
                 taskRepository.insertTask(newTask)
-                fetchTasks() // Refresh the task list from the database
+                fetchTasks() // Refresh the task list
             }
         }
     }
 
-    // Register for activity result to handle the edited task
+    // Register for editing an existing task
     private val editTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -74,7 +80,7 @@ class TaskDashboardActivity : AppCompatActivity() {
                     taskRepository.updateTask(updatedTask)
                     runOnUiThread {
                         adapter.notifyItemChanged(taskPosition)
-                        fetchTasks() // Fetch updated list from database
+                        fetchTasks() // Fetch updated list
                     }
                 }
             }
@@ -85,6 +91,8 @@ class TaskDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_dashboard)
 
+
+
         // Handle edge-to-edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -92,11 +100,11 @@ class TaskDashboardActivity : AppCompatActivity() {
             insets
         }
 
-        // Initialize the TaskRepository
+        // Initialize TaskRepository
         val taskDao = TaskDatabase.getInstance(applicationContext).taskDao()
         taskRepository = TaskRepository(taskDao)
 
-        // RecyclerView setup
+        // Setup RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.rv_task_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -114,7 +122,7 @@ class TaskDashboardActivity : AppCompatActivity() {
                     putExtra("TASK_ID", task.id)
                     putExtra("TASK_TITLE", task.title)
                     putExtra("TASK_DESCRIPTION", task.description)
-                    // Convert status string to boolean for the CheckBox
+                    // Convert status to boolean for CheckBox
                     putExtra("TASK_STATUS", task.status == "Completed")
                     putExtra("TASK_POSITION", position)
                 }
@@ -122,9 +130,9 @@ class TaskDashboardActivity : AppCompatActivity() {
             },
             onDeleteTask = { task: Task, position ->
                 lifecycleScope.launch(Dispatchers.IO) {
-                    taskRepository.deleteTask(task) // Remove task from the database
+                    taskRepository.deleteTask(task) // Delete task from database
                     runOnUiThread {
-                        adapter.removeTaskAt(position) // Remove task from the adapter and update UI
+                        adapter.removeTaskAt(position) // Remove task from the adapter
                         Toast.makeText(this@TaskDashboardActivity, "Task deleted", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -135,12 +143,12 @@ class TaskDashboardActivity : AppCompatActivity() {
         // Load tasks from the database
         fetchTasks()
 
-        // Handle search input dynamically
+        // Setup search and filter functionality
         val searchEditText = findViewById<EditText>(R.id.et_search_task)
         val completedCheckBox = findViewById<CheckBox>(R.id.cb_completed)
         val pendingCheckBox = findViewById<CheckBox>(R.id.cb_pending)
 
-        // Set the initial state of the checkboxes
+        // Initial checkbox states
         completedCheckBox.isChecked = false
         pendingCheckBox.isChecked = true
 
@@ -162,6 +170,32 @@ class TaskDashboardActivity : AppCompatActivity() {
             val intent = Intent(this, AddTaskActivity::class.java)
             addTaskLauncher.launch(intent)
         }
+
+        // Setting up DrawerLayout and NavigationView for the menu
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+
+        // Setting up ActionBarDrawerToggle to sync with the drawer
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        // Handling navigation menu item clicks
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    // Handle Home navigation
+                    Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_task_dashboard -> {
+                    // Handle Task Dashboard navigation
+                    Toast.makeText(this, "Already on Task Dashboard", Toast.LENGTH_SHORT).show()
+                }
+                // Add more cases for other menu items
+            }
+            true
+        }
+
     }
 
     // Fetch tasks from the database
@@ -174,6 +208,7 @@ class TaskDashboardActivity : AppCompatActivity() {
         }
     }
 
+    // Filter tasks based on search and checkbox states
     private fun filterTaskList(
         searchText: String,
         showCompleted: Boolean,
