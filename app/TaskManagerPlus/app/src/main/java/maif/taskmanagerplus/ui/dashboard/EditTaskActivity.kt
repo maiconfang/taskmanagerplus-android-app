@@ -1,5 +1,6 @@
 package maif.taskmanagerplus.ui.dashboard
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -31,21 +32,26 @@ class EditTaskActivity : AppCompatActivity() {
         completedCheckBox.isChecked = taskStatus
 
         saveButton.setOnClickListener {
+            // Get the updated task data
             val updatedTitle = titleEditText.text.toString()
             val updatedDescription = descriptionEditText.text.toString()
             val updatedStatus = completedCheckBox.isChecked
-            val taskId = intent.getIntExtra("TASK_ID", -1) // Pegue o ID da tarefa
+            val taskId = intent.getIntExtra("TASK_ID", -1)
+            val taskPosition = intent.getIntExtra("TASK_POSITION", taskPosition) // Recebe a posição da tarefa
 
+            // Return the updated data to TaskDashboardActivity
             val resultIntent = Intent().apply {
                 putExtra("UPDATED_TITLE", updatedTitle)
                 putExtra("UPDATED_DESCRIPTION", updatedDescription)
                 putExtra("UPDATED_STATUS", updatedStatus)
-                putExtra("TASK_POSITION", taskPosition)
-                putExtra("TASK_ID", taskId) // Envie o ID da tarefa de volta
+                putExtra("TASK_ID", taskId)  // Include task ID for update
+                putExtra("TASK_POSITION", taskPosition) // Include the task position
             }
-            setResult(RESULT_OK, resultIntent)
-            finish()
+
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish() // Close the activity and return to the previous one
         }
+
 
     }
 }

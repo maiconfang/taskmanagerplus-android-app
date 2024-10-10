@@ -8,7 +8,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -24,16 +23,33 @@ import maif.taskmanagerplus.data.model.TaskDatabase
 import maif.taskmanagerplus.data.model.TaskRepository
 import maif.taskmanagerplus.ui.login.afterTextChanged
 
-
 class TaskDashboardActivity : AppCompatActivity() {
-
-    companion object {
-        const val ADD_TASK_REQUEST_CODE = 1
-        const val EDIT_TASK_REQUEST_CODE = 2
-    }
 
     private lateinit var adapter: TaskDashboardAdapter
     private lateinit var taskRepository: TaskRepository
+
+    // Register for activity result to handle adding a new task
+    private val addTaskLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val newTaskTitle = result.data?.getStringExtra("TASK_TITLE") ?: return@registerForActivityResult
+            val newTaskDescription = result.data?.getStringExtra("TASK_DESCRIPTION") ?: return@registerForActivityResult
+            val isCompleted = result.data?.getBooleanExtra("TASK_STATUS", false) ?: return@registerForActivityResult
+
+            val newTask = Task(
+                title = newTaskTitle,
+                description = newTaskDescription,
+                status = if (isCompleted) "Completed" else "Pending"
+            )
+
+            // Insert the new task within a coroutine
+            lifecycleScope.launch(Dispatchers.IO) {
+                taskRepository.insertTask(newTask)
+                fetchTasks() // Refresh the task list from the database
+            }
+        }
+    }
 
     // Register for activity result to handle the edited task
     private val editTaskLauncher = registerForActivityResult(
@@ -44,24 +60,32 @@ class TaskDashboardActivity : AppCompatActivity() {
             val updatedDescription = result.data?.getStringExtra("UPDATED_DESCRIPTION") ?: return@registerForActivityResult
             val updatedStatus = result.data?.getBooleanExtra("UPDATED_STATUS", false) ?: return@registerForActivityResult
 
-            val position = result.data?.getIntExtra("TASK_POSITION", -1) ?: return@registerForActivityResult
-            if (position != -1) {
+            val taskId = result.data?.getIntExtra("TASK_ID", -1) ?: return@registerForActivityResult
+            val taskPosition = result.data?.getIntExtra("TASK_POSITION", -1) ?: return@registerForActivityResult
+
+            if (taskId != -1 && taskPosition != -1) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val updatedTask = Task(title = updatedTitle, description = updatedDescription, status = updatedStatus.toString())
+                    val updatedTask = Task(
+                        id = taskId,
+                        title = updatedTitle,
+                        description = updatedDescription,
+                        status = if (updatedStatus) "Completed" else "Pending"
+                    )
                     taskRepository.updateTask(updatedTask)
-                    fetchTasks() // Fetch updated list from database
+                    runOnUiThread {
+                        adapter.notifyItemChanged(taskPosition)
+                        fetchTasks() // Fetch updated list from database
+                    }
                 }
             }
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_task_dashboard)
 
+        // Handle edge-to-edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -85,11 +109,13 @@ class TaskDashboardActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             },
-            onEditTask = { task: Task, position -> // Explicitly specifying the Task type
+            onEditTask = { task: Task, position ->
                 val intent = Intent(this, EditTaskActivity::class.java).apply {
+                    putExtra("TASK_ID", task.id)
                     putExtra("TASK_TITLE", task.title)
                     putExtra("TASK_DESCRIPTION", task.description)
-                    putExtra("TASK_STATUS", task.status)
+                    // Convert status string to boolean for the CheckBox
+                    putExtra("TASK_STATUS", task.status == "Completed")
                     putExtra("TASK_POSITION", position)
                 }
                 editTaskLauncher.launch(intent)
@@ -106,14 +132,13 @@ class TaskDashboardActivity : AppCompatActivity() {
         val pendingCheckBox = findViewById<CheckBox>(R.id.cb_pending)
 
         // Set the initial state of the checkboxes
-        completedCheckBox.isChecked = false // Uncheck Completed
-        pendingCheckBox.isChecked = true // Check Pending
+        completedCheckBox.isChecked = false
+        pendingCheckBox.isChecked = true
 
         searchEditText.afterTextChanged { searchText ->
             filterTaskList(searchText, completedCheckBox.isChecked, pendingCheckBox.isChecked)
         }
 
-        // Filter by Completed and Pending status
         completedCheckBox.setOnCheckedChangeListener { _, _ ->
             filterTaskList(searchEditText.text.toString(), completedCheckBox.isChecked, pendingCheckBox.isChecked)
         }
@@ -126,7 +151,7 @@ class TaskDashboardActivity : AppCompatActivity() {
         val addTaskButton = findViewById<ImageButton>(R.id.btn_add_task)
         addTaskButton.setOnClickListener {
             val intent = Intent(this, AddTaskActivity::class.java)
-            startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
+            addTaskLauncher.launch(intent)
         }
     }
 
@@ -139,54 +164,6 @@ class TaskDashboardActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == ADD_TASK_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Handling task addition
-            val newTaskTitle = data?.getStringExtra("TASK_TITLE") ?: ""
-            val newTaskDescription = data?.getStringExtra("TASK_DESCRIPTION") ?: ""
-            val isCompleted = data?.getBooleanExtra("TASK_STATUS", false) ?: false
-
-            val newTask = Task(
-                title = newTaskTitle,
-                description = newTaskDescription,
-                status = if (isCompleted) "Completed" else "Pending"
-            )
-
-            // Insert the new task within a coroutine
-            lifecycleScope.launch(Dispatchers.IO) {
-                taskRepository.insertTask(newTask)
-                fetchTasks() // Refresh the task list from the database
-            }
-        } else if (requestCode == EDIT_TASK_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Handling task editing
-            val updatedTitle = data?.getStringExtra("UPDATED_TITLE") ?: ""
-            val updatedDescription = data?.getStringExtra("UPDATED_DESCRIPTION") ?: ""
-            val updatedStatus = data?.getBooleanExtra("UPDATED_STATUS", false) ?: false
-            val position = data?.getIntExtra("TASK_POSITION", -1) ?: -1
-            val taskId = data?.getIntExtra("TASK_ID", -1) ?: -1
-
-            if (position != -1 && taskId != -1) {
-                val updatedTask = Task(
-                    id = taskId,
-                    title = updatedTitle,
-                    description = updatedDescription,
-                    status = if (updatedStatus) "Completed" else "Pending"
-                )
-
-                // Update the task within a coroutine
-                lifecycleScope.launch(Dispatchers.IO) {
-                    taskRepository.updateTask(updatedTask)
-                }
-                adapter.notifyItemChanged(position)
-            }
-        }
-    }
-
-
-
 
     private fun filterTaskList(
         searchText: String,
@@ -202,8 +179,7 @@ class TaskDashboardActivity : AppCompatActivity() {
 
             runOnUiThread {
                 if (filteredList.isEmpty()) {
-                    val text = "No tasks found"
-                    val toast = Toast.makeText(this@TaskDashboardActivity, text, Toast.LENGTH_SHORT)
+                    val toast = Toast.makeText(this@TaskDashboardActivity, "No tasks found", Toast.LENGTH_SHORT)
                     toast.show()
 
                     Handler(Looper.getMainLooper()).postDelayed({
