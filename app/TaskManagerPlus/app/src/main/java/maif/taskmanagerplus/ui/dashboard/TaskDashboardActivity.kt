@@ -119,6 +119,15 @@ class TaskDashboardActivity : AppCompatActivity() {
                     putExtra("TASK_POSITION", position)
                 }
                 editTaskLauncher.launch(intent)
+            },
+            onDeleteTask = { task: Task, position ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    taskRepository.deleteTask(task) // Remove task from the database
+                    runOnUiThread {
+                        adapter.removeTaskAt(position) // Remove task from the adapter and update UI
+                        Toast.makeText(this@TaskDashboardActivity, "Task deleted", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         )
         recyclerView.adapter = adapter

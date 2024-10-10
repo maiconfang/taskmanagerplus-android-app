@@ -13,7 +13,8 @@ import maif.taskmanagerplus.data.model.Task
 class TaskDashboardAdapter(
     private var tasks: MutableList<Task>, // MutableList to allow task modifications
     private val onTaskClick: (Task) -> Unit, // Lambda to handle task click for detail view
-    private val onEditTask: (Task, Int) -> Unit // Lambda to handle task edit click
+    private val onEditTask: (Task, Int) -> Unit, // Lambda to handle task edit click
+    private val onDeleteTask: (Task, Int) -> Unit // Callback for deleting task
 ) : RecyclerView.Adapter<TaskDashboardAdapter.TaskViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -33,10 +34,10 @@ class TaskDashboardAdapter(
         // Handle delete button click with confirmation
         holder.deleteButton.setOnClickListener {
             AlertDialog.Builder(holder.itemView.context)
-                .setTitle("Delete maif.taskmanagerplus.data.model.Task")
+                .setTitle("Delete Task: ${task.title}?") // Pass the task title dynamically
                 .setMessage("Are you sure you want to delete this task?")
                 .setPositiveButton("Delete") { _, _ ->
-                    removeTask(position) // Remove task from list upon confirmation
+                    onDeleteTask(task, position) // Call the delete callback to remove task from database
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -46,6 +47,7 @@ class TaskDashboardAdapter(
         holder.editButton.setOnClickListener {
             onEditTask(task, position) // Trigger the edit callback to launch edit activity
         }
+
     }
 
     override fun getItemCount(): Int = tasks.size
@@ -57,10 +59,10 @@ class TaskDashboardAdapter(
         notifyDataSetChanged() // Refresh the RecyclerView with the new list
     }
 
-    // Function to remove a task from the list
-    private fun removeTask(position: Int) {
-        tasks.removeAt(position) // Remove the task at the given position
-        notifyItemRemoved(position) // Notify RecyclerView of the removal
+    // Remove task from the list
+    fun removeTaskAt(position: Int) {
+        tasks.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

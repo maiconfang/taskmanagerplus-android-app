@@ -24,7 +24,7 @@ class EditTaskActivity : AppCompatActivity() {
         val taskTitle = intent.getStringExtra("TASK_TITLE")
         val taskDescription = intent.getStringExtra("TASK_DESCRIPTION")
         val taskStatus = intent.getBooleanExtra("TASK_STATUS", false)
-        val taskPosition = intent.getIntExtra("TASK_POSITION", -1) // Recebe a posição da tarefa
+        val taskPosition = intent.getIntExtra("TASK_POSITION", -1) // Gets the position of the task
 
         // Pre-fill the fields with the current task data
         titleEditText.setText(taskTitle)
@@ -37,7 +37,7 @@ class EditTaskActivity : AppCompatActivity() {
             val updatedDescription = descriptionEditText.text.toString()
             val updatedStatus = completedCheckBox.isChecked
             val taskId = intent.getIntExtra("TASK_ID", -1)
-            val taskPosition = intent.getIntExtra("TASK_POSITION", taskPosition) // Recebe a posição da tarefa
+            val taskPosition = intent.getIntExtra("TASK_POSITION", taskPosition) // Gets the position of the task
 
             // Return the updated data to TaskDashboardActivity
             val resultIntent = Intent().apply {
