@@ -3,9 +3,13 @@ package maif.taskmanagerplus.ui.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import maif.taskmanagerplus.R
 import maif.taskmanagerplus.data.model.Task
 import maif.taskmanagerplus.data.model.TaskDatabase
@@ -22,11 +27,16 @@ import maif.taskmanagerplus.ui.dashboard.AddTaskActivity
 import maif.taskmanagerplus.ui.dashboard.EditTaskActivity
 import maif.taskmanagerplus.ui.dashboard.TaskDashboardAdapter
 import maif.taskmanagerplus.ui.dashboard.TaskDashboardDetailActivity
+import maif.taskmanagerplus.ui.login.afterTextChanged
 
 class TaskOverviewFragment : Fragment() {
 
     private lateinit var adapter: TaskDashboardAdapter
     private lateinit var taskRepository: TaskRepository
+
+    private lateinit var searchEditText: EditText
+    private lateinit var completedCheckBox: CheckBox
+    private lateinit var pendingCheckBox: CheckBox
 
     // Registro para adicionar uma nova tarefa
     private val addTaskLauncher = registerForActivityResult(
@@ -128,6 +138,28 @@ class TaskOverviewFragment : Fragment() {
         // Carregar as tarefas do banco de dados
         fetchTasks()
 
+        // Setup search and filter functionality
+        searchEditText = view.findViewById(R.id.et_search_task)
+        completedCheckBox = view.findViewById(R.id.cb_completed)
+        pendingCheckBox = view.findViewById(R.id.cb_pending)
+
+        // Initial checkbox states
+        completedCheckBox.isChecked = false
+        pendingCheckBox.isChecked = true
+
+        searchEditText.afterTextChanged { searchText ->
+            filterTaskList(searchText, completedCheckBox.isChecked, pendingCheckBox.isChecked)
+        }
+
+        completedCheckBox.setOnCheckedChangeListener { _, _ ->
+            filterTaskList(searchEditText.text.toString(), completedCheckBox.isChecked, pendingCheckBox.isChecked)
+        }
+
+        pendingCheckBox.setOnCheckedChangeListener { _, _ ->
+            filterTaskList(searchEditText.text.toString(), completedCheckBox.isChecked, pendingCheckBox.isChecked)
+        }
+
+
         // Botão para adicionar nova tarefa
         val addTaskButton = view.findViewById<ImageButton>(R.id.btn_add_task_overview)
         addTaskButton.setOnClickListener {
@@ -138,11 +170,53 @@ class TaskOverviewFragment : Fragment() {
 
     // Fetch tasks from the database
     private fun fetchTasks() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val tasks = taskRepository.getAllTasks()
-            requireActivity().runOnUiThread {
-                adapter.updateTaskList(tasks)
+            val filteredList = tasks.filter {
+                // Aplicar o filtro de acordo com o estado inicial dos checkboxes
+                (pendingCheckBox.isChecked && it.status == "Pending") ||
+                        (completedCheckBox.isChecked && it.status == "Completed")
+            }
+
+            withContext(Dispatchers.Main) {
+                adapter.updateTaskList(filteredList)
             }
         }
+    }
+
+    // Filter tasks based on search and checkbox states
+    private fun filterTaskList(
+        searchText: String,
+        showCompleted: Boolean,
+        showPending: Boolean
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val tasks = taskRepository.getAllTasks()
+            val filteredList = tasks.filter {
+                it.title.contains(searchText, ignoreCase = true) &&
+                        ((showCompleted && it.status == "Completed") || (showPending && it.status == "Pending"))
+            }
+
+            withContext(Dispatchers.Main) {
+                if (filteredList.isEmpty()) {
+                    val toast = Toast.makeText(requireContext(), "No tasks found", Toast.LENGTH_SHORT)
+                    toast.show()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        toast.cancel()
+                    }, 2000)
+
+                    adapter.updateTaskList(emptyList())
+                } else {
+                    adapter.updateTaskList(filteredList)
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Limpar o campo de busca ao sair da tela
+        searchEditText.setText("")
     }
 }
