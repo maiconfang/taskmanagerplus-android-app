@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import maif.taskmanagerplus.R
 import maif.taskmanagerplus.data.model.Task
@@ -69,6 +70,9 @@ class TaskAdapter(
         val deleteButton: ImageButton = itemView.findViewById(R.id.btn_delete_task)
         val editButton: ImageButton = itemView.findViewById(R.id.btn_edit_task)
 
+        // Get the status color view
+        val statusColorView: View = itemView.findViewById(R.id.status_color)
+
         fun bind(task: Task) {
             val titleTextView = itemView.findViewById<TextView>(R.id.tv_task_title)
             val statusTextView = itemView.findViewById<TextView>(R.id.tv_task_status)
@@ -76,6 +80,19 @@ class TaskAdapter(
             // Set the task details in the view
             titleTextView.text = task.title
             statusTextView.text = if (task.status == "Completed") "Completed" else "Pending"
+
+            // Change the color of the status indicator based on task status
+            when (task.status) {
+                "Completed" -> statusColorView.setBackgroundColor(
+                    ContextCompat.getColor(itemView.context, R.color.green)
+                )
+                "Pending" -> statusColorView.setBackgroundColor(
+                    ContextCompat.getColor(itemView.context, R.color.red)
+                )
+                else -> statusColorView.setBackgroundColor(
+                    ContextCompat.getColor(itemView.context, R.color.gray) // Default color for other statuses
+                )
+            }
 
         }
     }

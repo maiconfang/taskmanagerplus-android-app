@@ -24,14 +24,17 @@
     <!-- Button add task -->
     <ImageButton
         android:id="@+id/btn_add_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_add_24"
+        android:background="@drawable/rounded_rectangle"
         android:contentDescription="Add Task"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <!-- Filters for completed and pending tasks -->
     <CheckBox
