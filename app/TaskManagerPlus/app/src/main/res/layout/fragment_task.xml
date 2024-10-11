@@ -7,30 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.task.TaskFragment">
 
-    <TextView
-        android:id="@+id/tv_task_manager_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Task Manager"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
-
     <!-- Filter search -->
     <EditText
         android:id="@+id/et_search_task"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Title"
-        android:layout_marginTop="16dp"
+        android:textSize="18sp"
+        android:layout_marginTop="32dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_task_manager_title"/>
+        app:layout_constraintEnd_toStartOf="@id/btn_add_task"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Button add task -->
     <ImageButton
@@ -39,8 +28,10 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add_24"
         android:contentDescription="Add Task"
-        app:layout_constraintTop_toBottomOf="@id/tv_task_manager_title"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Filters for completed and pending tasks -->
     <CheckBox
@@ -48,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Completed"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@+id/et_search_task"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
@@ -58,6 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pending"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@+id/et_search_task"
         app:layout_constraintStart_toEndOf="@+id/cb_completed"
         android:layout_marginTop="16dp"

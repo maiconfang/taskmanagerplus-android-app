@@ -10,6 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Task Title"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_task_status"
@@ -21,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pending"
+        android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/btn_edit_task"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="8dp" />
@@ -28,23 +30,26 @@
     <!-- Edit Button -->
     <ImageButton
         android:id="@+id/btn_edit_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_edit_24"
-    android:contentDescription="Edit Task"
-    app:layout_constraintEnd_toStartOf="@id/btn_delete_task"
-    app:layout_constraintTop_toTopOf="parent"
-    android:layout_margin="8dp"/>
+        android:scaleType="fitCenter"
+        android:contentDescription="Edit Task"
+        app:layout_constraintEnd_toStartOf="@id/btn_delete_task"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="8dp"/>
 
     <!-- Delete Button -->
     <ImageButton
         android:id="@+id/btn_delete_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_delete_24"
-    android:contentDescription="Delete Task"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    android:layout_margin="8dp"/>
+        android:scaleType="fitCenter"
+        android:contentDescription="Delete Task"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="8dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
