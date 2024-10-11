@@ -8,7 +8,10 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
-        <item
+        <!--In the future, I plan to use these items for new functionalities, but for now, they will remain commented out as they are not required at this stage."
+
+        This version communicates that the menu items are reserved for future use but are currently commented out as they're not necessary right now-->
+<!--        <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_gallery" />
@@ -16,6 +19,7 @@
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_slideshow"/>
+-->
 
         <item
             android:id="@+id/nav_task"

@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var username: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val username = binding.username
+        username = binding.username
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
@@ -112,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
 
       // Navigate to MainActivity after successful login
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("USER_EMAIL", username.text.toString())
         startActivity(intent)
         finish() // Close the login screen
 

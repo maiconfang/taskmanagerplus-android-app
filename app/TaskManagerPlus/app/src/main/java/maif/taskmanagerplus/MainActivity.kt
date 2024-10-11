@@ -2,6 +2,7 @@ package maif.taskmanagerplus
 
 import android.os.Bundle
 import android.view.Menu
+import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -44,6 +45,14 @@ class MainActivity : AppCompatActivity() {
 
         // Connecting NavigationView with the NavigationController
         navView.setupWithNavController(navController)
+
+        // Get the user email passed from the login screen
+        val userEmail = intent.getStringExtra("USER_EMAIL")
+
+        // Access the header view and update the email TextView
+        val headerView = navView.getHeaderView(0)
+        val navHeaderSubtitle = headerView.findViewById<TextView>(R.id.textView) // ID of the TextView in the header
+        navHeaderSubtitle.text = userEmail  // Set the user's email in the header
     }
 
     // Inflating the options menu (main menu)
