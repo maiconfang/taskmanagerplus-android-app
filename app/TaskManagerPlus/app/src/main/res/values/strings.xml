@@ -20,6 +20,8 @@
     <string name="invalid_password">Password must be >2 characters</string>
     <string name="login_failed">"Login failed"</string>
 
+    <string name="task_manager">"Task Manager"</string>
+
 
 
 </resources>

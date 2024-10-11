@@ -1,15 +1,15 @@
-package maif.taskmanagerplus.ui.dashboard
+package maif.taskmanagerplus.ui.task.ui
 
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import maif.taskmanagerplus.R
 
-class TaskDashboardDetailActivity : AppCompatActivity() {
+class TaskDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_dashboard_detail)
+        setContentView(R.layout.activity_task_detail)
 
         val title = intent.getStringExtra("TASK_TITLE")
         val description = intent.getStringExtra("TASK_DESCRIPTION")

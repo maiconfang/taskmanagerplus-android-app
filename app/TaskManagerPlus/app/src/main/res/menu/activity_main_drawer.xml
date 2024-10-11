@@ -18,8 +18,8 @@
             android:title="@string/menu_slideshow"/>
 
         <item
-            android:id="@+id/nav_overview_ask"
+            android:id="@+id/nav_task"
             android:icon="@drawable/ic_task_24"
-            android:title="Task Overviewww " />
+            android:title="@string/task_manager" />
     </group>
 </menu>

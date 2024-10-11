@@ -1,4 +1,4 @@
-package maif.taskmanagerplus.ui.fragment
+package maif.taskmanagerplus.ui.task
 
 import android.app.Activity
 import android.content.Intent
@@ -23,15 +23,15 @@ import maif.taskmanagerplus.R
 import maif.taskmanagerplus.data.model.Task
 import maif.taskmanagerplus.data.model.TaskDatabase
 import maif.taskmanagerplus.data.model.TaskRepository
-import maif.taskmanagerplus.ui.dashboard.AddTaskActivity
-import maif.taskmanagerplus.ui.dashboard.EditTaskActivity
-import maif.taskmanagerplus.ui.dashboard.TaskDashboardAdapter
-import maif.taskmanagerplus.ui.dashboard.TaskDashboardDetailActivity
 import maif.taskmanagerplus.ui.login.afterTextChanged
+import maif.taskmanagerplus.ui.task.ui.AddTaskActivity
+import maif.taskmanagerplus.ui.task.ui.EditTaskActivity
+import maif.taskmanagerplus.ui.task.ui.TaskAdapter
+import maif.taskmanagerplus.ui.task.ui.TaskDetailActivity
 
-class TaskOverviewFragment : Fragment() {
+class TaskFragment : Fragment() {
 
-    private lateinit var adapter: TaskDashboardAdapter
+    private lateinit var adapter: TaskAdapter
     private lateinit var taskRepository: TaskRepository
 
     private lateinit var searchEditText: EditText
@@ -90,7 +90,7 @@ class TaskOverviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_task_overview, container, false)
+        return inflater.inflate(R.layout.fragment_task, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,9 +104,9 @@ class TaskOverviewFragment : Fragment() {
         val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv_task_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = TaskDashboardAdapter(mutableListOf(),
+        adapter = TaskAdapter(mutableListOf(),
             onTaskClick = { task: Task ->
-                val intent = Intent(requireContext(), TaskDashboardDetailActivity::class.java).apply {
+                val intent = Intent(requireContext(), TaskDetailActivity::class.java).apply {
                     putExtra("TASK_TITLE", task.title)
                     putExtra("TASK_DESCRIPTION", task.description)
                     putExtra("TASK_STATUS", task.status)
@@ -161,7 +161,7 @@ class TaskOverviewFragment : Fragment() {
 
 
         // Botão para adicionar nova tarefa
-        val addTaskButton = view.findViewById<ImageButton>(R.id.btn_add_task_overview)
+        val addTaskButton = view.findViewById<ImageButton>(R.id.btn_add_task)
         addTaskButton.setOnClickListener {
             val intent = Intent(requireContext(), AddTaskActivity::class.java)
             addTaskLauncher.launch(intent)  // Lançar a AddTaskActivity e capturar o resultado

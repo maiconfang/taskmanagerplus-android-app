@@ -2,7 +2,6 @@ package maif.taskmanagerplus
 
 import android.os.Bundle
 import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         // AppBarConfiguration defines which fragments/activities are considered top-level
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_overview_ask
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_task
             ), drawerLayout
         )
 

@@ -24,10 +24,10 @@
         tools:layout="@layout/fragment_slideshow" />
 
     <fragment
-        android:id="@+id/nav_overview_ask"
-        android:name="maif.taskmanagerplus.ui.fragment.TaskOverviewFragment"
-        android:label="Task Overview"
-        tools:layout="@layout/fragment_task_overview" />
+        android:id="@+id/nav_task"
+        android:name="maif.taskmanagerplus.ui.task.TaskFragment"
+        android:label="@string/task_manager"
+        tools:layout="@layout/fragment_task" />
 
 
 </navigation>

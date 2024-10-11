@@ -1,4 +1,4 @@
-package maif.taskmanagerplus.ui.dashboard
+package maif.taskmanagerplus.ui.task.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -39,7 +39,7 @@ class EditTaskActivity : AppCompatActivity() {
             val taskId = intent.getIntExtra("TASK_ID", -1)
             val taskPosition = intent.getIntExtra("TASK_POSITION", taskPosition) // Gets the position of the task
 
-            // Return the updated data to TaskDashboardActivity
+            // Return the updated data to TaskActivity
             val resultIntent = Intent().apply {
                 putExtra("UPDATED_TITLE", updatedTitle)
                 putExtra("UPDATED_DESCRIPTION", updatedDescription)

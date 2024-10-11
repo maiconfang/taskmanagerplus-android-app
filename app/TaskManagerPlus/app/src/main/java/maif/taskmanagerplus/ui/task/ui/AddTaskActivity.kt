@@ -1,4 +1,4 @@
-package maif.taskmanagerplus.ui.dashboard
+package maif.taskmanagerplus.ui.task.ui
 
 import android.app.Activity
 import android.content.Intent

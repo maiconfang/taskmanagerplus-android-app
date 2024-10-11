@@ -5,14 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.TaskOverviewFragment">
+    tools:context=".ui.task.TaskFragment">
 
-    <!-- Título do dashboard -->
     <TextView
-        android:id="@+id/tv_dashboard_title"
+        android:id="@+id/tv_task_manager_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task Dashboard"
+        android:text="Task Manager"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +19,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
 
-    <!-- Campo de busca -->
+    <!-- Filter search -->
     <EditText
         android:id="@+id/et_search_task"
         android:layout_width="0dp"
@@ -31,19 +30,19 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_dashboard_title"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_task_manager_title"/>
 
-    <!-- Botão de adicionar tarefa -->
+    <!-- Button add task -->
     <ImageButton
-        android:id="@+id/btn_add_task_overview"
+        android:id="@+id/btn_add_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add_24"
         android:contentDescription="Add Task"
-        app:layout_constraintTop_toBottomOf="@id/tv_dashboard_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_task_manager_title"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Filtros para tarefas completadas e pendentes -->
+    <!-- Filters for completed and pending tasks -->
     <CheckBox
         android:id="@+id/cb_completed"
         android:layout_width="wrap_content"

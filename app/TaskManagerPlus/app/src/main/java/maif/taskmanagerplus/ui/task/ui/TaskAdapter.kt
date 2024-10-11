@@ -1,4 +1,4 @@
-package maif.taskmanagerplus.ui.dashboard
+package maif.taskmanagerplus.ui.task.ui
 
 import android.app.AlertDialog
 import android.view.LayoutInflater
@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import maif.taskmanagerplus.R
 import maif.taskmanagerplus.data.model.Task
 
-class TaskDashboardAdapter(
+class TaskAdapter(
     private var tasks: MutableList<Task>, // MutableList to allow task modifications
     private val onTaskClick: (Task) -> Unit, // Lambda to handle task click for detail view
     private val onEditTask: (Task, Int) -> Unit, // Lambda to handle task edit click
     private val onDeleteTask: (Task, Int) -> Unit // Callback for deleting task
-) : RecyclerView.Adapter<TaskDashboardAdapter.TaskViewHolder>() {
+) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task_dashboard, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
         return TaskViewHolder(view)
     }
 
