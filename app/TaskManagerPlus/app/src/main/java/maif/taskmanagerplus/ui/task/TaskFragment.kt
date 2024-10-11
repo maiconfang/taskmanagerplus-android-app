@@ -38,7 +38,7 @@ class TaskFragment : Fragment() {
     private lateinit var completedCheckBox: CheckBox
     private lateinit var pendingCheckBox: CheckBox
 
-    // Registro para adicionar uma nova tarefa
+    // Register to add a new task
     private val addTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -53,15 +53,15 @@ class TaskFragment : Fragment() {
                 status = if (isCompleted) "Completed" else "Pending"
             )
 
-            // Inserir a nova tarefa no banco de dados
+            // Insert the new task into the database
             lifecycleScope.launch(Dispatchers.IO) {
                 taskRepository.insertTask(newTask)
-                fetchTasks() // Atualizar a lista de tarefas
+                fetchTasks() // Update the task list
             }
         }
     }
 
-    // Registro para editar uma tarefa existente
+    // Register to edit an existing task
     private val editTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -71,7 +71,7 @@ class TaskFragment : Fragment() {
             val updatedDescription = result.data?.getStringExtra("UPDATED_DESCRIPTION") ?: return@registerForActivityResult
             val updatedStatus = result.data?.getBooleanExtra("UPDATED_STATUS", false) ?: return@registerForActivityResult
 
-            // Atualizar a tarefa no banco de dados
+            // Update the task in the database
             lifecycleScope.launch(Dispatchers.IO) {
                 val updatedTask = Task(
                     id = taskId,
@@ -80,7 +80,7 @@ class TaskFragment : Fragment() {
                     status = if (updatedStatus) "Completed" else "Pending"
                 )
                 taskRepository.updateTask(updatedTask)
-                fetchTasks() // Atualizar a lista de tarefas
+                fetchTasks() // Update the task list
             }
         }
     }
@@ -96,11 +96,11 @@ class TaskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inicializa o TaskRepository
+        // Initialize TaskRepository
         val taskDao = TaskDatabase.getInstance(requireContext()).taskDao()
         taskRepository = TaskRepository(taskDao)
 
-        // Setup do RecyclerView
+        // Setup RecyclerView
         val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv_task_list)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -121,7 +121,7 @@ class TaskFragment : Fragment() {
                     putExtra("TASK_STATUS", task.status == "Completed")
                     putExtra("TASK_POSITION", position)
                 }
-                editTaskLauncher.launch(intent) // Lançar a EditTaskActivity e capturar o resultado
+                editTaskLauncher.launch(intent) // Launch EditTaskActivity and capture the result
             },
             onDeleteTask = { task: Task, position ->
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -135,7 +135,7 @@ class TaskFragment : Fragment() {
         )
         recyclerView.adapter = adapter
 
-        // Carregar as tarefas do banco de dados
+        // Load tasks from the database
         fetchTasks()
 
         // Setup search and filter functionality
@@ -160,11 +160,11 @@ class TaskFragment : Fragment() {
         }
 
 
-        // Botão para adicionar nova tarefa
+        // Button to add a new task
         val addTaskButton = view.findViewById<ImageButton>(R.id.btn_add_task)
         addTaskButton.setOnClickListener {
             val intent = Intent(requireContext(), AddTaskActivity::class.java)
-            addTaskLauncher.launch(intent)  // Lançar a AddTaskActivity e capturar o resultado
+            addTaskLauncher.launch(intent)  // Launch AddTaskActivity and capture the result
         }
     }
 
@@ -173,7 +173,7 @@ class TaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val tasks = taskRepository.getAllTasks()
             val filteredList = tasks.filter {
-                // Aplicar o filtro de acordo com o estado inicial dos checkboxes
+                // Apply filter according to the initial checkbox states
                 (pendingCheckBox.isChecked && it.status == "Pending") ||
                         (completedCheckBox.isChecked && it.status == "Completed")
             }
@@ -216,7 +216,7 @@ class TaskFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        // Limpar o campo de busca ao sair da tela
+        // Clear search field when leaving the screen
         searchEditText.setText("")
     }
 }
