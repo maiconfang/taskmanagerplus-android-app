@@ -29,13 +29,6 @@ class MainActivity : AppCompatActivity() {
         // Setting up the toolbar for this activity
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        // FloatingActionButton (FAB) click action - showing a Snackbar
-//        binding.appBarMain.fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null)
-//                .setAnchorView(R.id.fab).show()
-//        }
-
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -43,8 +36,7 @@ class MainActivity : AppCompatActivity() {
         // AppBarConfiguration defines which fragments/activities are considered top-level
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_task_dashboard,
-                R.id.nav_overview_ask
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_overview_ask
             ), drawerLayout
         )
 

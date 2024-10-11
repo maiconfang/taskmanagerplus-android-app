@@ -20,7 +20,6 @@
     <string name="invalid_password">Password must be >2 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-    <string name="menu_task_dashboard">Task Dashboard"</string>
 
 
 </resources>

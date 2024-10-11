@@ -16,15 +16,10 @@
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_slideshow"/>
-        <!-- New menu item for maif.taskmanagerplus.data.model.Task Dashboard -->
-        <item
-            android:id="@+id/nav_task_dashboard"
-            android:icon="@drawable/baseline_task_24"
-            android:title="Task Dashboard" />
 
         <item
             android:id="@+id/nav_overview_ask"
-            android:icon="@drawable/alarm_24"
+            android:icon="@drawable/ic_task_24"
             android:title="Task Overviewww " />
     </group>
 </menu>
