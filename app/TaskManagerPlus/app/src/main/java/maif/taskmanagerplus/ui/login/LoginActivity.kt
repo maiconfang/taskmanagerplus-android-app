@@ -12,6 +12,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import maif.taskmanagerplus.MainActivity
 import maif.taskmanagerplus.databinding.ActivityLoginBinding
@@ -23,6 +24,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
     private lateinit var username: EditText
+    private lateinit var warningMessageTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,14 +36,21 @@ class LoginActivity : AppCompatActivity() {
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
+        warningMessageTextView = binding.warningMessage!! // Correctly cast to TextView
 
+        // Definir a mensagem aqui
+        warningMessageTextView.text = "The Email and Password fields accept any value, for example, user@taskmanagerplus.com and 123456"
+        warningMessageTextView.visibility = View.VISIBLE // Torna o TextView visível
+
+        // Initialize the ViewModel
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
 
+        // Observe form state changes and update UI accordingly
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
 
-            // disable login button unless both username / password is valid
+            // Disable login button unless both username / password are valid
             login.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
@@ -52,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
+        // Observe login result and navigate to the main screen upon success
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
@@ -64,10 +74,11 @@ class LoginActivity : AppCompatActivity() {
             }
             setResult(Activity.RESULT_OK)
 
-            //Complete and destroy login activity once successful
+            // Complete and destroy login activity once successful
             finish()
         })
 
+        // Text watcher to monitor input changes for username and password
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
                 username.text.toString(),
@@ -83,6 +94,7 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
+            // Handle "Done" action on the keyboard
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
@@ -94,31 +106,42 @@ class LoginActivity : AppCompatActivity() {
                 false
             }
 
+            // Click listener for login button
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        // Observe the warning message from the ViewModel and display it if needed
+        loginViewModel.warningMessage.observe(this, Observer { message ->
+            if (message.isNotEmpty()) {
+                warningMessageTextView.text = Editable.Factory.getInstance().newEditable(message)
+                warningMessageTextView.visibility = View.VISIBLE
+            } else {
+                warningMessageTextView.visibility = View.GONE
+            }
+        })
     }
 
+    // Update UI with the logged-in user's information
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
-        // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
 
-      // Navigate to MainActivity after successful login
+        // Navigate to MainActivity after successful login
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("USER_EMAIL", username.text.toString())
         startActivity(intent)
         finish() // Close the login screen
-
     }
 
+    // Show an error message if login fails
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
