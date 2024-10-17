@@ -1,15 +1,16 @@
+---
 
 # TaskManagerPlus Android App
 
 ## Overview
-**TaskManagerPlus Android App** is a mobile application built with Kotlin for managing tasks. It is part of the TaskManagerPlus series and focuses on providing a simple and intuitive interface for task creation and management. The app includes features such as user authentication (login), task creation, and task list management, stored locally on the device using Room.
+**TaskManagerPlus Android App** is a mobile application built using Kotlin for task management. As part of the TaskManagerPlus series, this app provides a user-friendly interface for creating, editing, deleting, and filtering tasks by their status. The tasks are stored locally on the device using the Room database for persistence, allowing users to manage their tasks efficiently.
 
 ## Features
-- User login and authentication.
-- Task creation, editing, and deletion.
-- Persistent storage of tasks using Room database.
-- Intuitive UI with RecyclerView for task lists.
-- Kotlin-based architecture with MVVM pattern.
+- Create, edit, and delete tasks.
+- Store tasks locally using the Room database for offline persistence.
+- Filter tasks by their status: Pending or Completed.
+- Intuitive user interface (UI) utilizing RecyclerView for displaying tasks.
+- Kotlin-based architecture, following the MVVM (Model-View-ViewModel) pattern for clean code separation.
 
 ## Project Structure
 ```bash
@@ -20,11 +21,11 @@
 │   ├── /src/main/res/         # UI resources (layouts, drawables, strings)
 │   ├── /src/main/assets/      # App assets (icons, images)
 │   └── /src/test/             # Unit tests
-├── /docs/                    # Documentation (Requirements, Test cases, etc.)
-├── /assets/                  # Images and icons used in the app
+├── /docs/                    # Project documentation (Requirements, Test cases, etc.)
+├── /assets/                  # Project assets (e.g., images, icons)
 ├── README.md                 # Project overview and setup instructions
-├── LICENSE                   # License for the project
-└── build.gradle              # Gradle configuration file for the project
+├── LICENSE                   # License file
+└── build.gradle              # Gradle configuration file
 ```
 
 ## Installation and Setup
@@ -37,27 +38,30 @@
 2. Open the project in **Android Studio**.
 
 3. Sync Gradle and build the project:
-    - Android Studio will automatically detect the `build.gradle` file and install the necessary dependencies.
+    - Android Studio will detect the `build.gradle` file and install all necessary dependencies.
 
 4. Run the app on an emulator or physical device:
     - Go to **Run > Run 'app'** in Android Studio.
 
 ## Screenshots
-> (Add screenshots here once the app is in development)
+> (Add screenshots here once the app is fully developed)
 
 ## Documentation
-- Full project documentation can be found in the `/docs/` directory, including:
-  - **Requirements**
-  - **Architecture Design**
-  - **Test Cases**
-  - **Diagrams**
+- The full project documentation is located in the `/docs/` directory, including:
+  - **Requirements**: Functional and non-functional requirements of the application.
+  - **Architecture Design**: Overview of the system architecture and key components.
+  - **Test Cases**: Documented test cases used to validate application functionality.
+  - **Diagrams**: Visual diagrams explaining app structure, flow, and interactions.
+  - **Wireframes**: Available in both PDF and markdown formats in English (EN-CA) and Portuguese (PT-BR) for reference.
 
 ## Contributing
-If you'd like to contribute to the project, feel free to open an issue or submit a pull request.
+If you'd like to contribute, feel free to open an issue or submit a pull request. Contributions are welcome, and we encourage collaboration.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
 ---
 
-**TaskManagerPlus Android App** is part of the TaskManagerPlus series, developed to explore various approaches and technologies for task management applications.
+**TaskManagerPlus Android App** is a project within the TaskManagerPlus series, aimed at exploring various development techniques for creating effective task management solutions.
+
+---
