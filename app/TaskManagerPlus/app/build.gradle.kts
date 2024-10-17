@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.espresso.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,4 +80,25 @@ dependencies {
     implementation("androidx.activity:activity:$activity_version")
     // Kotlin
     implementation("androidx.activity:activity-ktx:$activity_version")
+
+    // Core testing framework and extensions
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+
+    // Espresso core for UI testing
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
+    // JUnit and Kotlin extensions
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
+
+    // Truth for more intuitive assertions
+    androidTestImplementation("androidx.test.ext:truth:1.6.0")
+
+    // Runner to execute instrumented tests
+    androidTestImplementation("androidx.test:runner:1.6.1")
+
+    // Orchestrator for better test management
+    androidTestUtil("androidx.test:orchestrator:1.5.0")
+
 }

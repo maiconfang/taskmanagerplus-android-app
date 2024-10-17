@@ -41,7 +41,9 @@
         android:layout_height="wrap_content"
         android:text="Save"
         app:layout_constraintTop_toBottomOf="@id/cb_edit_task_completed"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+    android:layout_margin="16dp" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

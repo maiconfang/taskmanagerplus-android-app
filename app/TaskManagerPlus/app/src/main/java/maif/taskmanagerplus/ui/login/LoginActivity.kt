@@ -25,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var username: EditText
     private lateinit var warningMessageTextView: TextView
+    private var lastToastMessage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,11 +129,14 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
+        lastToastMessage = "$welcome $displayName"
         Toast.makeText(
             applicationContext,
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
+
+
 
         // Navigate to MainActivity after successful login
         val intent = Intent(this, MainActivity::class.java)
@@ -144,6 +148,10 @@ class LoginActivity : AppCompatActivity() {
     // Show an error message if login fails
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    }
+
+    fun getLastToastMessage(): String? {
+        return lastToastMessage
     }
 }
 
@@ -161,3 +169,5 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
 }
+
+
