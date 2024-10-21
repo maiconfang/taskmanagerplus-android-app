@@ -1,4 +1,4 @@
-package maif.taskmanagerplus
+package maif.taskmanagerplus.espresso
 
 import android.util.Log
 import android.view.View
@@ -10,13 +10,13 @@ import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.*
+import maif.taskmanagerplus.R
 import maif.taskmanagerplus.ui.login.LoginActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Assert.assertEquals
 import org.hamcrest.Matcher
-import org.junit.Ignore // Import the @Ignore annotation
 
 @RunWith(AndroidJUnit4::class)
 class LoginActivityTest {

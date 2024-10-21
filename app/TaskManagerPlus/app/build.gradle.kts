@@ -101,4 +101,7 @@ dependencies {
     // Orchestrator for better test management
     androidTestUtil("androidx.test:orchestrator:1.5.0")
 
+    // https://mvnrepository.com/artifact/io.appium/java-client
+    implementation("io.appium:java-client:9.3.0")
+
 }
