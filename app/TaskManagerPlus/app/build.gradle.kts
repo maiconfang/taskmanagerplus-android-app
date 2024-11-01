@@ -28,14 +28,22 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         viewBinding = true
+    }
+
+    packaging {
+        resources {
+            excludes.add("META-INF/INDEX.LIST")
+            excludes.add("META-INF/io.netty.versions.properties")
+            excludes.add("META-INF/DEPENDENCIES")
+        }
     }
 }
 
@@ -83,7 +91,7 @@ dependencies {
 
     // Core testing framework and extensions
     androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+     androidTestImplementation("androidx.test:core-ktx:1.6.1")
 
     // Espresso core for UI testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -101,7 +109,8 @@ dependencies {
     // Orchestrator for better test management
     androidTestUtil("androidx.test:orchestrator:1.5.0")
 
-    // https://mvnrepository.com/artifact/io.appium/java-client
-    implementation("io.appium:java-client:9.3.0")
+
+
+
 
 }

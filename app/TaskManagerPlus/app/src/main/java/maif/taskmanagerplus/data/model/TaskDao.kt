@@ -4,8 +4,8 @@ import androidx.room.*
 
 @Dao
 interface TaskDao {
-    @Insert
-    suspend fun insertTask(task: Task)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTask(task: Task): Long
 
     @Update
     suspend fun updateTask(task: Task)
@@ -18,4 +18,12 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks")
     suspend fun getAllTasks(): List<Task>
+
+
+
+
+
+
+
+
 }
