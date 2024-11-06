@@ -23,7 +23,14 @@ class TaskManagerTest {
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)
 
 
+
     @Test
+    fun test() {
+        println("Hello World - Maicon Fang")
+
+    }
+
+   // Test
     fun testCreateNewTask() {
 
         // Perform login
