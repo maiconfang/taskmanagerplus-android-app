@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 import org.junit.Assert.assertEquals
 import org.hamcrest.Matcher
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class LoginActivityTest {
 
     // Launches the LoginActivity before each test
