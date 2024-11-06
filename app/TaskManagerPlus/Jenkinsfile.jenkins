@@ -50,6 +50,45 @@ pipeline {
             }
         }
 
+
+        // tudo pra cima funcioa 2024-11-06 quarta-feira as 15:23
+
+        stage('Iniciar Emulador') {
+                    steps {
+                        script {
+                            echo 'Iniciando o emulador Android'
+                            bat """
+                                start /B emulator -avd "${env.AVD_NAME}" -no-window -no-audio
+                                timeout /t 60
+                                adb wait-for-device
+                                adb shell settings put global window_animation_scale 0
+                                adb shell settings put global transition_animation_scale 0
+                                adb shell settings put global animator_duration_scale 0
+                            """
+                            echo 'Emulador iniciado e configurado'
+                        }
+                    }
+                }
+
+        stage('Executar Testes') {
+                    steps {
+                        echo 'Executando Testes Automatizados'
+                        bat 'cd app\\TaskManagerPlus && .\\gradlew.bat connectedAndroidTest --info'
+                        echo 'Testes concluídos com sucesso'
+                    }
+        }
+
+        stage('Encerrar Emulador') {
+                    steps {
+                        echo 'Encerrando o Emulador Android'
+                        bat 'adb emu kill'
+                        echo 'Emulador encerrado'
+                    }
+        }
+
+
+        
+
     }
 
 
