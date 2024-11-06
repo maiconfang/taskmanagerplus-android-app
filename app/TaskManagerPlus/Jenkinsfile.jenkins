@@ -79,7 +79,7 @@ pipeline {
         stage('Coletar Resultados de Teste') {
             steps {
                 echo 'Coletando Resultados de Teste'
-                junit 'app\TaskManagerPlus\app\build\reports\androidTests\connected\debug\*.xml'
+                junit 'app/TaskManagerPlus/app/build/reports/androidTests/connected/debug/*.xml'
                 echo 'Resultados de Teste coletados'
             }
         }
