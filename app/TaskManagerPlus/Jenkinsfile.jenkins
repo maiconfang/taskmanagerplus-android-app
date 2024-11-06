@@ -19,6 +19,20 @@ pipeline {
             }
         }
 
+         stage('Listar Arquivos') {
+                    steps {
+                        echo 'Listando arquivos no diretório de trabalho:'
+                        bat 'dir'
+                    }
+                }
+
+         stage('Validar Gradle Wrapper') {
+                    steps {
+                        echo 'Validando a presença do Gradle Wrapper'
+                        bat 'if exist gradlew.bat (echo gradlew.bat encontrado) else (echo gradlew.bat NÃO encontrado && exit /b 1)'
+                    }
+         }
+
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'
