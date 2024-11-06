@@ -36,7 +36,7 @@ pipeline {
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'
-                bat '.\\gradlew.bat clean assembleDebug --info'
+                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug --info'
                 echo 'Build Aplicativo concluído com sucesso'
             }
         }
