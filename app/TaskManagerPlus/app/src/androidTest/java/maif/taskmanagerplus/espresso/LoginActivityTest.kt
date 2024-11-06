@@ -26,7 +26,7 @@ class LoginActivityTest {
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)
 
     //    @Ignore // Skip this test
-//    @Test
+//    Test
     fun testLoginFieldsInteraction() {
         // Type an email address in the username field
         onView(withId(R.id.username))
@@ -52,7 +52,7 @@ class LoginActivityTest {
         }
     }
 
-//    @Test
+//    Test
     fun testCapturePasswordErrorMessage() {
 
         // Type an email address in the username field

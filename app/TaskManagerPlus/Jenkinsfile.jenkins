@@ -76,13 +76,15 @@ pipeline {
                     }
         }
 
-        stage('Coletar Resultados de Teste') {
-            steps {
-                echo 'Coletando Resultados de Teste'
-                junit 'app/TaskManagerPlus/app/build/reports/androidTests/connected/debug/*.xml'
-                echo 'Resultados de Teste coletados'
+    stage('Coletar Resultados de Teste') {
+        steps {
+            echo 'Coletando Resultados de Teste'
+            dir('app/TaskManagerPlus/app/build/reports/androidTests/connected/debug') {
+                junit '**/*.xml'
             }
+            echo 'Resultados de Teste coletados'
         }
+    }
 
 
         stage('Encerrar Emulador') {
