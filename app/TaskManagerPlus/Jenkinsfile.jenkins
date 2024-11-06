@@ -51,8 +51,6 @@ pipeline {
         }
 
 
-        // tudo pra cima funcioa 2024-11-06 quarta-feira as 15:23
-
         stage('Iniciar Emulador') {
                     steps {
                         script {
@@ -79,12 +77,13 @@ pipeline {
         }
 
         stage('Coletar Resultados de Teste') {
-                    steps {
-                        echo 'Coletando Resultados de Teste'
-                        junit '**/build/test-results/**/*.xml'
-                        echo 'Resultados de Teste coletados'
-                    }
+            steps {
+                echo 'Coletando Resultados de Teste'
+                junit 'app/build/reports/androidTests/connected/**/*.xml'
+                echo 'Resultados de Teste coletados'
+            }
         }
+
 
         stage('Encerrar Emulador') {
                     steps {
