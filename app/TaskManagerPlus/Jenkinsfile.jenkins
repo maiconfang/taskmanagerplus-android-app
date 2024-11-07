@@ -50,6 +50,13 @@ pipeline {
             }
         }
 
+        stage('Verificar APK Gerado') {
+                    steps {
+                        echo 'Verificando se o APK foi gerado na pasta esperada:'
+                        bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug'
+                    }
+        }
+
         stage('Iniciar Emulador') {
             steps {
                 script {
@@ -90,15 +97,22 @@ pipeline {
             }
         }
 
-        stage('Build APK') {
+        stage('Build APK Release') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo 'Iniciando a etapa de Build APK'
+                echo 'Iniciando a etapa de Build APK Release'
                 bat 'cd app\\TaskManagerPlus && .\\gradlew.bat assembleRelease --info'
-                echo 'Build APK concluído com sucesso'
+                echo 'Build APK Release concluído com sucesso'
             }
+        }
+
+        stage('Verificar APK Release Gerado') {
+                    steps {
+                        echo 'Verificando se o APK de release foi gerado na pasta esperada:'
+                        bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\release'
+                    }
         }
 
         stage('Encerrar Emulador') {
@@ -111,12 +125,13 @@ pipeline {
     }
 
     post {
-     success {
-               archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/debug/app-debug.apk', allowEmptyArchive: false
+        success {
+            // Armazena o APK de debug como artefato
+            archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/debug/app-debug.apk', allowEmptyArchive: false
 
-                // Publica o APK de release não assinado como artefato
-             //   archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
-            }
+            // Armazena o APK de release não assinado como artefato
+            archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
+        }
         failure {
             echo 'O build falhou. O APK não será gerado devido a falhas nos testes.'
         }
