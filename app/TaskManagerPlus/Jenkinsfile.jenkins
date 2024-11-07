@@ -112,7 +112,10 @@ pipeline {
 
     post {
      success {
-                archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/debug/app-debug.apk', allowEmptyArchive: false
+                // archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/debug/app-debug.apk', allowEmptyArchive: false
+
+                // Publica o APK de release não assinado como artefato
+                archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
             }
         failure {
             echo 'O build falhou. O APK não será gerado devido a falhas nos testes.'
