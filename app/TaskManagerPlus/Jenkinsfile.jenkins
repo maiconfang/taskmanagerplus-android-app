@@ -76,13 +76,18 @@ pipeline {
                     }
         }
 
-    stage('Coletar Resultados de Teste') {
+    stage('Publicar Relatório de Teste (HTML)') {
         steps {
-            echo 'Coletando Resultados de Teste'
-            dir('app/TaskManagerPlus/app/build/reports/androidTests/connected/debug') {
-                junit '**/*.xml'
-            }
-            echo 'Resultados de Teste coletados'
+            echo 'Publicando Relatório de Teste HTML'
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'app/TaskManagerPlus/app/build/reports/androidTests/connected/debug',
+                reportFiles: 'index.html',
+                reportName: 'Relatório de Teste Android'
+            ])
+            echo 'Relatório de Teste HTML publicado'
         }
     }
 

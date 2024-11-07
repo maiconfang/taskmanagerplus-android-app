@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,6 +17,7 @@ android {
         versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
     }
 
     buildTypes {
@@ -45,6 +47,31 @@ android {
             excludes.add("META-INF/DEPENDENCIES")
         }
     }
+
+
+    // Adicionando as configurações de testOptions
+    testOptions {
+        // Utiliza o Orchestrator para testes mais confiáveis
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+
+        // Configurações para testes unitários
+        unitTests.all {
+            it.testLogging {
+                events("passed", "failed", "skipped")
+            }
+            it.reports {
+                junitXml.required.set(true)
+                junitXml.outputLocation.set(layout.buildDirectory.dir("test-results/junit/connectedDebugAndroidTest"))
+            }
+
+        }
+        // Diretório específico para resultados de testes instrumentados em XML
+        resultsDir = layout.buildDirectory.dir("test-results/connected").get().asFile.toString()
+
+
+
+    }
+
 }
 
 dependencies {
@@ -62,6 +89,7 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.ui.test.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

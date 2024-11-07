@@ -15,7 +15,7 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.CoreMatchers.not
 
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class TaskManagerTest {
 
     // Launches the LoginActivity before each test
@@ -26,7 +26,7 @@ class TaskManagerTest {
 
     @Test
     fun test() {
-        println("Hello World - Maicon Fang")
+        println("Hello World - Maicon Fang TaskManagerTest")
 
     }
 
