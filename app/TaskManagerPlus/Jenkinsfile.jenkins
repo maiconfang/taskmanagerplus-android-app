@@ -111,6 +111,9 @@ pipeline {
     }
 
     post {
+     success {
+                archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/debug/app-debug.apk', allowEmptyArchive: false
+            }
         failure {
             echo 'O build falhou. O APK não será gerado devido a falhas nos testes.'
         }

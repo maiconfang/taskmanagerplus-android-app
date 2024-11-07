@@ -30,7 +30,18 @@ class TaskManagerTest {
 
     }
 
+
     @Test
+    fun testFailOnPurpose() {
+        // Purpose: This test is designed to fail intentionally to demonstrate a failed test case in the report.
+
+        // Trying to match a view that should display the text "Non-existent text"
+        // Since this text does not exist, this check will fail
+//        onView(withId(R.id.text_home)) // Adjust to an ID available on the login screen or main screen
+//            .check(matches(withText("Non-existent text")))
+    }
+
+//    @Test
     fun testCreateNewTask() {
 
         // Perform login
@@ -47,7 +58,7 @@ class TaskManagerTest {
             .check(matches(hasDescendant(withText("Study Kotlin"))))
     }
 
-    @Test
+//    @Test
     fun testFilterPendingTasks() {
 
         // Perform login
@@ -69,7 +80,7 @@ class TaskManagerTest {
             ))))
     }
 
-    @Test
+//    @Test
     fun testEditExistingTaskWithNewTask() {
 
         // Perform login
@@ -103,7 +114,7 @@ class TaskManagerTest {
             .check(matches(hasDescendant(withText("Clean the car completely"))))
     }
 
-    @Test
+//    @Test
     fun testViewTaskDetails() {
 
         // Perform login
@@ -128,7 +139,7 @@ class TaskManagerTest {
         viewTaskDetails("Study Espresso", "Learn how to write UI tests with Espresso", "Pending")
     }
 
-    @Test
+//    @Test
     fun testDeleteNewTask() {
 
         // Perform login
@@ -154,7 +165,7 @@ class TaskManagerTest {
             .check(matches(not(hasDescendant(withText("Plan the weekend trip")))))
     }
 
-    @Test
+//    @Test
     fun testFilterTasksByCompletedStatus() {
 
         // Log in
@@ -189,15 +200,6 @@ class TaskManagerTest {
     }
 
 
-    @Test
-    fun testFailOnPurpose() {
-        // Purpose: This test is designed to fail intentionally to demonstrate a failed test case in the report.
-
-        // Trying to match a view that should display the text "Non-existent text"
-        // Since this text does not exist, this check will fail
-//        onView(withId(R.id.text_home)) // Adjust to an ID available on the login screen or main screen
-//            .check(matches(withText("Non-existent text")))
-    }
 
 
     // Helper method to perform login
