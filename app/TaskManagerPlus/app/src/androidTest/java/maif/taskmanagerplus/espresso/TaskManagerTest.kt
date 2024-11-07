@@ -195,8 +195,8 @@ class TaskManagerTest {
 
         // Trying to match a view that should display the text "Non-existent text"
         // Since this text does not exist, this check will fail
-//        onView(withId(R.id.text_home)) // Adjust to an ID available on the login screen or main screen
-//            .check(matches(withText("Non-existent text")))
+        onView(withId(R.id.text_home)) // Adjust to an ID available on the login screen or main screen
+            .check(matches(withText("Non-existent text")))
     }
 
 
