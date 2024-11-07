@@ -30,7 +30,7 @@ class TaskManagerTest {
 
     }
 
-   // Test
+    @Test
     fun testCreateNewTask() {
 
         // Perform login
@@ -47,7 +47,7 @@ class TaskManagerTest {
             .check(matches(hasDescendant(withText("Study Kotlin"))))
     }
 
-//    Test
+    @Test
     fun testFilterPendingTasks() {
 
         // Perform login
@@ -69,7 +69,7 @@ class TaskManagerTest {
             ))))
     }
 
-//    Test
+    @Test
     fun testEditExistingTaskWithNewTask() {
 
         // Perform login
@@ -103,7 +103,7 @@ class TaskManagerTest {
             .check(matches(hasDescendant(withText("Clean the car completely"))))
     }
 
-//    Test
+    @Test
     fun testViewTaskDetails() {
 
         // Perform login
@@ -128,7 +128,7 @@ class TaskManagerTest {
         viewTaskDetails("Study Espresso", "Learn how to write UI tests with Espresso", "Pending")
     }
 
-//    Test
+    @Test
     fun testDeleteNewTask() {
 
         // Perform login
@@ -154,7 +154,7 @@ class TaskManagerTest {
             .check(matches(not(hasDescendant(withText("Plan the weekend trip")))))
     }
 
-//    Test
+    @Test
     fun testFilterTasksByCompletedStatus() {
 
         // Log in
