@@ -72,6 +72,23 @@ android {
 
     }
 
+
+
+
+}
+
+// Task personalizada para copiar e renomear o APK após a build
+tasks.register<Copy>("copyAndRenameDebugApk") {
+    val debugApkPath = layout.buildDirectory.file("outputs/apk/debug/app-debug.apk")
+    val outputDir = file("$rootDir/apk-outputs") // Diretório de destino
+    val newApkName = "TaskManagerPlus-debug.apk"
+
+    from(debugApkPath)
+    into(outputDir)
+    rename { newApkName }
+
+    // Configura a task para rodar após o assembleDebug
+    dependsOn("assembleDebug")
 }
 
 dependencies {
