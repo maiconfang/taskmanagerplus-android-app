@@ -188,6 +188,18 @@ class TaskManagerTest {
             ))))
     }
 
+
+    @Test
+    fun testFailOnPurpose() {
+        // Purpose: This test is designed to fail intentionally to demonstrate a failed test case in the report.
+
+        // Trying to match a view that should display the text "Non-existent text"
+        // Since this text does not exist, this check will fail
+        onView(withId(R.id.text_home)) // Adjust to an ID available on the login screen or main screen
+            .check(matches(withText("Non-existent text")))
+    }
+
+
     // Helper method to perform login
     private fun performLogin() {
         onView(withId(R.id.username))
