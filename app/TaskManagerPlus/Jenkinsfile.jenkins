@@ -19,25 +19,17 @@ pipeline {
             }
         }
 
-         stage('Listar Arquivos') {
-                    steps {
-                        echo 'Listando arquivos no diretório de trabalho:'
-                        bat 'dir'
-                    }
-                }
+        stage('Listar Arquivos') {
+            steps {
+                echo 'Listando arquivos no diretório de trabalho:'
+                bat 'dir'
+            }
+        }
 
         stage('Validar Gradle Wrapper') {
             steps {
                 echo 'Validando a presença do Gradle Wrapper no diretório app/TaskManagerPlus'
                 bat 'cd app\\TaskManagerPlus && if exist gradlew.bat (echo gradlew.bat encontrado) else (echo gradlew.bat NÃO encontrado && exit /b 1)'
-            }
-        }
-
-        stage('Build Aplicativo') {
-            steps {
-                echo 'Iniciando a etapa de Build Aplicativo'
-                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug --info'
-                echo 'Build Aplicativo concluído com sucesso'
             }
         }
 
@@ -50,60 +42,80 @@ pipeline {
             }
         }
 
+        stage('Build Aplicativo') {
+            steps {
+                echo 'Iniciando a etapa de Build Aplicativo'
+                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug --info'
+                echo 'Build Aplicativo concluído com sucesso'
+            }
+        }
 
         stage('Iniciar Emulador') {
-                    steps {
-                        script {
-                            echo 'Iniciando o emulador Android'
-                            bat """
-                                start /B emulator -avd "${env.AVD_NAME}" -no-window -no-audio
-                                timeout /t 60
-                                adb wait-for-device
-                                adb shell settings put global window_animation_scale 0
-                                adb shell settings put global transition_animation_scale 0
-                                adb shell settings put global animator_duration_scale 0
-                            """
-                            echo 'Emulador iniciado e configurado'
-                        }
-                    }
+            steps {
+                script {
+                    echo 'Iniciando o emulador Android'
+                    bat """
+                        start /B emulator -avd "${env.AVD_NAME}" -no-window -no-audio
+                        timeout /t 60
+                        adb wait-for-device
+                        adb shell settings put global window_animation_scale 0
+                        adb shell settings put global transition_animation_scale 0
+                        adb shell settings put global animator_duration_scale 0
+                    """
+                    echo 'Emulador iniciado e configurado'
                 }
+            }
+        }
 
         stage('Executar Testes') {
-                    steps {
-                        echo 'Executando Testes Automatizados'
-                        bat 'cd app\\TaskManagerPlus && .\\gradlew.bat connectedAndroidTest --info'
-                        echo 'Testes concluídos com sucesso'
-                    }
+            steps {
+                echo 'Executando Testes Automatizados'
+                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat connectedAndroidTest --info'
+                echo 'Testes concluídos com sucesso'
+            }
         }
 
-    stage('Publicar Relatório de Teste (HTML)') {
-        steps {
-            echo 'Publicando Relatório de Teste HTML'
-            publishHTML(target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'app/TaskManagerPlus/app/build/reports/androidTests/connected/debug',
-                reportFiles: 'index.html',
-                reportName: 'Relatório de Teste Android'
-            ])
-            echo 'Relatório de Teste HTML publicado'
+        stage('Publicar Relatório de Teste (HTML)') {
+            steps {
+                echo 'Publicando Relatório de Teste HTML'
+                publishHTML(target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'app/TaskManagerPlus/app/build/reports/androidTests/connected/debug',
+                    reportFiles: 'index.html',
+                    reportName: 'Relatório de Teste Android'
+                ])
+                echo 'Relatório de Teste HTML publicado'
+            }
         }
-    }
 
+        stage('Build APK') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo 'Iniciando a etapa de Build APK'
+                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat assembleRelease --info'
+                echo 'Build APK concluído com sucesso'
+            }
+        }
 
         stage('Encerrar Emulador') {
-                    steps {
-                        echo 'Encerrando o Emulador Android'
-                        bat 'adb emu kill'
-                        echo 'Emulador encerrado'
-                    }
+            steps {
+                echo 'Encerrando o Emulador Android'
+                bat 'adb emu kill'
+                echo 'Emulador encerrado'
+            }
         }
-
-
-
-
     }
 
-
+    post {
+        failure {
+            echo 'O build falhou. O APK não será gerado devido a falhas nos testes.'
+        }
+        always {
+            echo 'Pipeline concluída'
+        }
+    }
 }
