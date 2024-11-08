@@ -8,7 +8,7 @@ pipeline {
 				script {
 					echo 'Starting Android emulator...'
 					bat """
-					start "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "Galaxy_A22_5G_API_33_-_Local" -no-window -no-audio -writable-system
+					start "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "Galaxy_A22_5G_API_33_-_Local" -no-window -no-audio -gpu swiftshader_indirect
 					ping -n 180 127.0.0.1 > nul
 					"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
 					"""
