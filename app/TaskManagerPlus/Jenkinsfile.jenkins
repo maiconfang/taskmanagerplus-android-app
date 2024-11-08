@@ -19,6 +19,13 @@ pipeline {
             }
         }
 
+        stage('Preparar Pasta de Destino') {
+            steps {
+                echo 'Criando pasta de destino apk-outputs, se não existir.'
+                bat 'if not exist apk-outputs mkdir apk-outputs'
+            }
+        }
+
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'

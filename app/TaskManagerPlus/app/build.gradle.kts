@@ -104,9 +104,24 @@ android {
 //    dependsOn("assembleDebug")
 //}
 
+// ele cria C:\ProgramData\Jenkins\.jenkins\workspace\Task-Manager-Plus-Pipeline\app\TaskManagerPlus\apk-outputs
+
+//tasks.register<Copy>("copyAndRenameDebugApk") {
+//    val debugApkPath = layout.buildDirectory.file("outputs/apk/debug/app-debug.apk")
+//    val outputDir = file("$rootDir/apk-outputs") // Diretório de destino dentro do workspace
+//    val newApkName = "TaskManagerPlus-debug.apk"
+//
+//    from(debugApkPath)
+//    into(outputDir)
+//    rename { newApkName }
+//
+//    // Configura a task para rodar após o assembleDebug
+//    dependsOn("assembleDebug")
+//}
+
 tasks.register<Copy>("copyAndRenameDebugApk") {
     val debugApkPath = layout.buildDirectory.file("outputs/apk/debug/app-debug.apk")
-    val outputDir = file("$rootDir/apk-outputs") // Diretório de destino dentro do workspace
+    val outputDir = file("../apk-outputs") // Diretório de destino relativo ao workspace
     val newApkName = "TaskManagerPlus-debug.apk"
 
     from(debugApkPath)
@@ -116,6 +131,7 @@ tasks.register<Copy>("copyAndRenameDebugApk") {
     // Configura a task para rodar após o assembleDebug
     dependsOn("assembleDebug")
 }
+
 
 dependencies {
 
