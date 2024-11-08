@@ -4,7 +4,7 @@ pipeline {
     environment {
         ANDROID_HOME = "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk"
         PATH = "${env.ANDROID_HOME}\\tools;${env.ANDROID_HOME}\\platform-tools;${env.PATH}"
-        AVD_NAME = "Galaxy A22 5G API 33 - Local"
+        AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // cmd emulator -list-avds
         GRADLE_USER_HOME = "${env.WORKSPACE}\\.gradle"
     }
 
@@ -98,7 +98,7 @@ pipeline {
                     echo 'Starting Android emulator'
                     bat """
                         start /B emulator -avd "${env.AVD_NAME}" -no-window -no-audio
-                        timeout /t 60
+                        timeout /t 120
                         adb wait-for-device
                         adb shell settings put global window_animation_scale 0
                         adb shell settings put global transition_animation_scale 0
