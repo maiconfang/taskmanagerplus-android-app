@@ -19,10 +19,12 @@ pipeline {
             }
         }
 
-        stage('Preparar Pasta de Destino') {
+        stage('Preparar Pastas de Destino') {
             steps {
-                echo 'Criando pasta de destino apk-outputs, se não existir.'
+                echo 'Criando pasta de destino apk-outputs dentro do workspace, se não existir.'
                 bat 'if not exist apk-outputs mkdir apk-outputs'
+                echo 'Criando pasta externa C:\\ApksGenerated, se não existir.'
+                bat 'if not exist C:\\ApksGenerated mkdir C:\\ApksGenerated'
             }
         }
 
@@ -51,14 +53,21 @@ pipeline {
 
         stage('Copiar APK para apk-outputs') {
             steps {
-                echo 'Copiando APK para a pasta apk-outputs'
-                bat 'copy app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk apk-outputs\\TaskManagerPlus-debug.apk'
+                echo 'Copiando APK para a pasta apk-outputs dentro do workspace'
+                bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug.apk"'
             }
         }
 
-        stage('Verificar APK na Nova Pasta') {
+        stage('Copiar APK para C:\\ApksGenerated') {
             steps {
-                echo 'Verificando se o APK foi copiado para a nova pasta: apk-outputs'
+                echo 'Copiando APK para a pasta C:\\ApksGenerated'
+                bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug.apk"'
+            }
+        }
+
+        stage('Verificar APK na Nova Pasta (apk-outputs)') {
+            steps {
+                echo 'Verificando se o APK foi copiado para a pasta apk-outputs'
                 bat 'dir apk-outputs'
                 bat '''
                     if exist apk-outputs\\TaskManagerPlus-debug.apk (
@@ -140,7 +149,7 @@ pipeline {
 
     post {
         success {
-            // Armazena o APK de debug da nova pasta como artefato
+            // Armazena o APK de debug da pasta apk-outputs como artefato
             archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug.apk', allowEmptyArchive: false
 
             // Armazena o APK de release não assinado como artefato
