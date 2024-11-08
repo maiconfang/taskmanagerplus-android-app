@@ -3,52 +3,20 @@ pipeline {
 
     environment {
         ANDROID_HOME = "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk"
-        PATH = "${env.ANDROID_HOME}\\tools;${env.ANDROID_HOME}\\platform-tools;${env.PATH}"
-        AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // cmd emulator -list-avds
+        AVD_NAME = "Galaxy_A22_5G_API_33_-_Local"
     }
 
     stages {
         stage('Start Emulator') {
             steps {
                 script {
-                    echo 'Starting Android emulator'
+                    echo 'Starting Android emulator...'
                     bat """
-                        start /B emulator -avd "${env.AVD_NAME}" -no-window -no-audio
-                        ping -n 120 127.0.0.1 > nul
-                        adb wait-for-device
+                    start "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect
+                    ping -n 180 127.0.0.1 > nul
+                    "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
                     """
-                    echo 'Emulator start command executed'
-                }
-            }
-        }
-
-        stage('Wait for Emulator to Boot') {
-            steps {
-                script {
-                    echo 'Waiting for emulator to fully boot'
-                    def booted = false
-                    def maxRetries = 10
-                    def retries = 0
-                    while (!booted && retries < maxRetries) {
-                        try {
-                            def output = bat(script: 'adb shell getprop sys.boot_completed', returnStdout: true).trim()
-                            if (output == '1') {
-                                booted = true
-                                echo 'Emulator booted successfully.'
-                            } else {
-                                echo 'Emulator not yet booted. Waiting...'
-                                sleep time: 10, unit: 'SECONDS'
-                                retries++
-                            }
-                        } catch (e) {
-                            echo 'Error checking boot status. Waiting...'
-                            sleep time: 10, unit: 'SECONDS'
-                            retries++
-                        }
-                    }
-                    if (!booted) {
-                        error 'Emulator failed to boot within the expected time.'
-                    }
+                    echo 'Emulator should now be started.'
                 }
             }
         }
