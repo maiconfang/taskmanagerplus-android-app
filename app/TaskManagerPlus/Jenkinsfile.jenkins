@@ -29,8 +29,30 @@ pipeline {
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'
-                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug copyAndRenameDebugApk --info'
+                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug --info'
                 echo 'Build Aplicativo concluído com sucesso'
+            }
+        }
+
+        stage('Verificar APK Gerado') {
+            steps {
+                echo 'Verificando se o APK foi gerado na pasta esperada:'
+                bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug'
+                bat '''
+                    if exist app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk (
+                        echo APK gerado com sucesso.
+                    ) else (
+                        echo APK NÃO encontrado na pasta de build!
+                        exit /b 1
+                    )
+                '''
+            }
+        }
+
+        stage('Copiar APK para apk-outputs') {
+            steps {
+                echo 'Copiando APK para a pasta apk-outputs'
+                bat 'copy app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk apk-outputs\\TaskManagerPlus-debug.apk'
             }
         }
 
