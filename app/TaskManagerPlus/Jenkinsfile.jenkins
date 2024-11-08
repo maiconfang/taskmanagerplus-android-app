@@ -107,6 +107,15 @@ pipeline {
                 }
             }
         }
+		
+		stage('Verify Installed APK') {
+            steps {
+                echo 'Checking installed packages in the emulator'
+                bat """
+                    adb shell pm list packages | findstr "${env.APP_PACKAGE}"
+                """
+            }
+        }
 
         // Etapa para desinstalar APK existente
         stage('Uninstall Existing APK') {
