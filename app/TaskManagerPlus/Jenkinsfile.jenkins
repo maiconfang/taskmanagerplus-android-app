@@ -1,20 +1,14 @@
 pipeline {
     agent any
 
-    environment {
-        AVD_NAME = 'Galaxy_A22_5G_API_33_-_Local'
-        EMULATOR_PATH = 'C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe'
-        ADB_PATH = 'C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe'
-    }
-
     stages {
         stage('Start Emulator') {
             steps {
                 script {
                     bat """
-                    start /B "\${EMULATOR_PATH}" -avd "\${AVD_NAME}" -no-window -no-audio
+                    start /B "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "Galaxy_A22_5G_API_33_-_Local" -no-window -no-audio
                     timeout /t 120 /nobreak
-                    "\${ADB_PATH}" wait-for-device
+                    "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
                     """
                 }
             }
@@ -42,7 +36,7 @@ pipeline {
     post {
         always {
             script {
-                bat "\${ADB_PATH} emu kill"
+                bat "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe emu kill"
             }
         }
     }
