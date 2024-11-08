@@ -7,23 +7,22 @@ pipeline {
         AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // Nome correto do AVD conforme 'emulator -list-avds'
     }
 
-    stages {
-        stage('Start Emulator') {
-            steps {
-                script {
-                    echo 'Starting Android emulator'
-                    bat """
-                        start /B emulator -avd "Galaxy_A22_5G_API_33_-_Local" -no-window -no-audio
-                        timeout /t 120
-                        adb wait-for-device
-                        adb shell settings put global window_animation_scale 0
-                        adb shell settings put global transition_animation_scale 0
-                        adb shell settings put global animator_duration_scale 0
-                    """
-                    echo 'Emulator started and configured'
-                }
-            }
-        }
+	stage('Start Emulator') {
+		steps {
+			script {
+				echo 'Starting Android emulator'
+				bat """
+					start /B "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio
+					timeout /t 120
+					"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
+					"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global window_animation_scale 0
+					"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global transition_animation_scale 0
+					"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global animator_duration_scale 0
+				"""
+				echo 'Emulator started and configured'
+			}
+		}
+	}
 
         stage('Wait for Emulator to Boot') {
             steps {
