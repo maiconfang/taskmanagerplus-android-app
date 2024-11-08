@@ -7,6 +7,7 @@ pipeline {
         AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // Use 'emulator -list-avds' to list AVD names
         GRADLE_USER_HOME = "${env.WORKSPACE}\\.gradle"
         APK_OUTPUT_DIR = "C:\\ApksGenerated"
+        APP_PACKAGE = "maif.taskmanagerplus" // Name of package of my app
     }
 
     stages {
@@ -107,38 +108,51 @@ pipeline {
             }
         }
 
-		stage('Wait for Emulator to Boot') {
-			steps {
-				script {
-					echo 'Waiting for emulator to fully boot'
-					def booted = false
-					def maxRetries = 30
-					def retries = 0
-					while (!booted && retries < maxRetries) {
-						try {
-							// Check if the emulator is responsive by listing installed packages
-							def output = bat(script: 'adb shell pm list packages', returnStdout: true).trim()
-							if (output) {
-								booted = true
-								echo 'Emulator booted and is responsive.'
-							} else {
-								echo 'Emulator not yet fully responsive. Waiting...'
-								sleep time: 10, unit: 'SECONDS'
-								retries++
-							}
-						} catch (e) {
-							echo 'Error checking emulator responsiveness. Waiting...'
-							sleep time: 10, unit: 'SECONDS'
-							retries++
-						}
-					}
-					if (!booted) {
-						error 'Emulator failed to boot within the expected time.'
-					}
-				}
-			}
-		}
+        // Etapa para desinstalar APK existente
+        stage('Uninstall Existing APK') {
+            steps {
+                echo 'Uninstalling existing APK to avoid INSTALL_FAILED_UPDATE_INCOMPATIBLE error'
+                bat """
+                    adb shell pm list packages | findstr "${env.APP_PACKAGE}" > nul
+                    if errorlevel 0 (
+                        adb uninstall "${env.APP_PACKAGE}"
+                    ) else (
+                        echo "No existing APK found. Proceeding with installation."
+                    )
+                """
+            }
+        }
 
+        stage('Wait for Emulator to Boot') {
+            steps {
+                script {
+                    echo 'Waiting for emulator to fully boot'
+                    def booted = false
+                    def maxRetries = 30
+                    def retries = 0
+                    while (!booted && retries < maxRetries) {
+                        try {
+                            def output = bat(script: 'adb shell pm list packages', returnStdout: true).trim()
+                            if (output) {
+                                booted = true
+                                echo 'Emulator booted and is responsive.'
+                            } else {
+                                echo 'Emulator not yet fully responsive. Waiting...'
+                                sleep time: 10, unit: 'SECONDS'
+                                retries++
+                            }
+                        } catch (e) {
+                            echo 'Error checking emulator responsiveness. Waiting...'
+                            sleep time: 10, unit: 'SECONDS'
+                            retries++
+                        }
+                    }
+                    if (!booted) {
+                        error 'Emulator failed to boot within the expected time.'
+                    }
+                }
+            }
+        }
 
         stage('Verify Emulator is Running') {
             steps {
