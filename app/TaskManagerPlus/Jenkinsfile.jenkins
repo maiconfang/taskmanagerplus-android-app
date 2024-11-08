@@ -14,6 +14,16 @@ pipeline {
             }
         }
 
+        stage('Check Emulator Status') {
+            steps {
+                script {
+                    bat """
+                    "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" devices
+                    """
+                }
+            }
+        }
+
         stage('Build APK') {
             steps {
                 bat './gradlew clean assembleDebug'
