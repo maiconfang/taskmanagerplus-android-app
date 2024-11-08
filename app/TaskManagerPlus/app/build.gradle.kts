@@ -91,9 +91,22 @@ android {
 //    dependsOn("assembleDebug")
 //}
 
+//tasks.register<Copy>("copyAndRenameDebugApk") {
+//    val debugApkPath = layout.buildDirectory.file("outputs/apk/debug/app-debug.apk")
+//    val outputDir = file("C:\\ApksGerados") // Novo diretório de destino
+//    val newApkName = "TaskManagerPlus-debug.apk"
+//
+//    from(debugApkPath)
+//    into(outputDir)
+//    rename { newApkName }
+//
+//    // Configura a task para rodar após o assembleDebug
+//    dependsOn("assembleDebug")
+//}
+
 tasks.register<Copy>("copyAndRenameDebugApk") {
     val debugApkPath = layout.buildDirectory.file("outputs/apk/debug/app-debug.apk")
-    val outputDir = file("C:\\ApksGerados") // Novo diretório de destino
+    val outputDir = file("$rootDir/apk-outputs") // Diretório de destino dentro do workspace
     val newApkName = "TaskManagerPlus-debug.apk"
 
     from(debugApkPath)

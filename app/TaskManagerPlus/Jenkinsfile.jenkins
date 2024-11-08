@@ -29,13 +29,13 @@ pipeline {
 
         stage('Verificar APK na Nova Pasta') {
             steps {
-                echo 'Verificando se o APK foi copiado para a nova pasta: C:\\ApksGerados'
-                bat 'dir C:\\ApksGerados'
+                echo 'Verificando se o APK foi copiado para a nova pasta: apk-outputs'
+                bat 'dir apk-outputs'
                 bat '''
-                    if exist C:\\ApksGerados\\TaskManagerPlus-debug.apk (
-                        echo APK copiado com sucesso para C:\\ApksGerados.
+                    if exist apk-outputs\\TaskManagerPlus-debug.apk (
+                        echo APK copiado com sucesso para apk-outputs.
                     ) else (
-                        echo APK NÃO encontrado na pasta C:\\ApksGerados!
+                        echo APK NÃO encontrado na pasta apk-outputs!
                         exit /b 1
                     )
                 '''
@@ -112,7 +112,7 @@ pipeline {
     post {
         success {
             // Armazena o APK de debug da nova pasta como artefato
-            archiveArtifacts artifacts: 'C:\\ApksGerados\\TaskManagerPlus-debug.apk', allowEmptyArchive: false
+            archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug.apk', allowEmptyArchive: false
 
             // Armazena o APK de release não assinado como artefato
             archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
