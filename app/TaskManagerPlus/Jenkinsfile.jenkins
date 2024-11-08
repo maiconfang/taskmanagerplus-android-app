@@ -99,7 +99,7 @@ pipeline {
                     echo 'Starting Android emulator'
                     bat """
                         start "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect
-                        ping -n 120 127.0.0.1 > nul
+                        ping -n 60 127.0.0.1 > nul
                         "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
                     """
                     echo 'Emulator should now be started and configured'
@@ -107,36 +107,38 @@ pipeline {
             }
         }
 
-        stage('Wait for Emulator to Boot') {
-            steps {
-                script {
-                    echo 'Waiting for emulator to fully boot'
-                    def booted = false
-                    def maxRetries = 30
-                    def retries = 0
-                    while (!booted && retries < maxRetries) {
-                        try {
-                            def output = bat(script: 'adb shell getprop sys.boot_completed', returnStdout: true).trim()
-                            if (output == '1') {
-                                booted = true
-                                echo 'Emulator booted successfully.'
-                            } else {
-                                echo 'Emulator not yet booted. Waiting...'
-                                sleep time: 10, unit: 'SECONDS'
-                                retries++
-                            }
-                        } catch (e) {
-                            echo 'Error checking boot status. Waiting...'
-                            sleep time: 10, unit: 'SECONDS'
-                            retries++
-                        }
-                    }
-                    if (!booted) {
-                        error 'Emulator failed to boot within the expected time.'
-                    }
-                }
-            }
-        }
+		stage('Wait for Emulator to Boot') {
+			steps {
+				script {
+					echo 'Waiting for emulator to fully boot'
+					def booted = false
+					def maxRetries = 30
+					def retries = 0
+					while (!booted && retries < maxRetries) {
+						try {
+							// Check if the emulator is responsive by listing installed packages
+							def output = bat(script: 'adb shell pm list packages', returnStdout: true).trim()
+							if (output) {
+								booted = true
+								echo 'Emulator booted and is responsive.'
+							} else {
+								echo 'Emulator not yet fully responsive. Waiting...'
+								sleep time: 10, unit: 'SECONDS'
+								retries++
+							}
+						} catch (e) {
+							echo 'Error checking emulator responsiveness. Waiting...'
+							sleep time: 10, unit: 'SECONDS'
+							retries++
+						}
+					}
+					if (!booted) {
+						error 'Emulator failed to boot within the expected time.'
+					}
+				}
+			}
+		}
+
 
         stage('Verify Emulator is Running') {
             steps {
