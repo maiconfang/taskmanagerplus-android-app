@@ -19,29 +19,6 @@ pipeline {
             }
         }
 
-        stage('Listar Arquivos') {
-            steps {
-                echo 'Listando arquivos no diretório de trabalho:'
-                bat 'dir'
-            }
-        }
-
-        stage('Validar Gradle Wrapper') {
-            steps {
-                echo 'Validando a presença do Gradle Wrapper no diretório app/TaskManagerPlus'
-                bat 'cd app\\TaskManagerPlus && if exist gradlew.bat (echo gradlew.bat encontrado) else (echo gradlew.bat NÃO encontrado && exit /b 1)'
-            }
-        }
-
-        stage('Verificar Ambiente') {
-            steps {
-                echo "ANDROID_HOME está definido como: ${env.ANDROID_HOME}"
-                echo "PATH está definido como: ${env.PATH}"
-                echo "AVD_NAME está definido como: ${env.AVD_NAME}"
-                echo "GRADLE_USER_HOME está definido como: ${env.GRADLE_USER_HOME}"
-            }
-        }
-
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'
@@ -50,12 +27,19 @@ pipeline {
             }
         }
 
-
-        stage('Verificar APK Gerado') {
-                    steps {
-                        echo 'Verificando se o APK foi gerado na pasta esperada:'
-                        bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug'
-                    }
+        stage('Verificar APK na Nova Pasta') {
+            steps {
+                echo 'Verificando se o APK foi copiado para a nova pasta: C:\\ApksGerados'
+                bat 'dir C:\\ApksGerados'
+                bat '''
+                    if exist C:\\ApksGerados\\TaskManagerPlus-debug.apk (
+                        echo APK copiado com sucesso para C:\\ApksGerados.
+                    ) else (
+                        echo APK NÃO encontrado na pasta C:\\ApksGerados!
+                        exit /b 1
+                    )
+                '''
+            }
         }
 
         stage('Iniciar Emulador') {
@@ -110,10 +94,10 @@ pipeline {
         }
 
         stage('Verificar APK Release Gerado') {
-                    steps {
-                        echo 'Verificando se o APK de release foi gerado na pasta esperada:'
-                        bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\release'
-                    }
+            steps {
+                echo 'Verificando se o APK de release foi gerado na pasta esperada:'
+                bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\release'
+            }
         }
 
         stage('Encerrar Emulador') {
@@ -140,5 +124,4 @@ pipeline {
             echo 'Pipeline concluída'
         }
     }
-
 }
