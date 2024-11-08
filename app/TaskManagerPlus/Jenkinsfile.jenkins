@@ -69,6 +69,7 @@ pipeline {
             steps {
                 script {
                     def timestamp = new Date().format("dd-MM-yyyy_HH-mm-ss")
+                    echo "Timestamp for APK: ${timestamp}"
                     bat """
                         copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
                     """
@@ -105,6 +106,21 @@ pipeline {
                     """
                     echo 'Emulator started and configured'
                 }
+            }
+        }
+
+        stage('Verify Emulator is Running') {
+            steps {
+                echo 'Verifying if the emulator is running'
+                bat '''
+                    adb devices | findstr "emulator" > nul
+                    if errorlevel 1 (
+                        echo Emulator is not running!
+                        exit /b 1
+                    ) else (
+                        echo Emulator is running.
+                    )
+                '''
             }
         }
 
