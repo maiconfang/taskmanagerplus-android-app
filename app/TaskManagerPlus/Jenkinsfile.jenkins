@@ -115,6 +115,7 @@ pipeline {
                 bat """
                     adb shell pm list packages | findstr "${env.APP_PACKAGE}" > nul
                     if errorlevel 0 (
+						adb shell pm clear "${env.APP_PACKAGE}"
                         adb uninstall "${env.APP_PACKAGE}"
                     ) else (
                         echo "No existing APK found. Proceeding with installation."
