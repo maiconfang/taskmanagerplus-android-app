@@ -3,28 +3,40 @@ pipeline {
 
     environment {
         ANDROID_HOME = "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk"
+        ANDROID_AVD_HOME = "C:\\Users\\maico\\.android" // Diretório correto do AVD
         PATH = "${env.ANDROID_HOME}\\emulator;${env.ANDROID_HOME}\\platform-tools;${env.PATH}"
-        AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // Nome correto do AVD conforme 'emulator -list-avds'
+        AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // Nome correto do AVD
     }
 
     stages {
-        stage('Start Emulator') {
-			steps {
-				script {
-					echo 'Starting Android emulator'
-					bat """
-						start /B "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio
-						timeout /t 120
-						"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
-						"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global window_animation_scale 0
-						"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global transition_animation_scale 0
-						"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global animator_duration_scale 0
-					"""
-					echo 'Emulator started and configured'
-				}
-			}
+        // Etapa de Depuração Opcional para Verificar o Ambiente
+        stage('Debug Environment') {
+            steps {
+                echo "ANDROID_AVD_HOME: ${env.ANDROID_AVD_HOME}"
+                bat 'dir "%ANDROID_AVD_HOME%\\avd"'
+                bat '"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -list-avds'
+            }
         }
 
+        // Etapa para Iniciar o Emulador
+        stage('Start Emulator') {
+            steps {
+                script {
+                    echo 'Starting Android emulator'
+                    bat """
+                        start /B "Emulator" "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio
+                        timeout /t 120 /nobreak
+                        "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" wait-for-device
+                        "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global window_animation_scale 0
+                        "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global transition_animation_scale 0
+                        "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell settings put global animator_duration_scale 0
+                    """
+                    echo 'Emulator started and configured'
+                }
+            }
+        }
+
+        // Etapa para Aguardar o Boot Completo do Emulador
         stage('Wait for Emulator to Boot') {
             steps {
                 script {
@@ -34,7 +46,7 @@ pipeline {
                     def retries = 0
                     while (!booted && retries < maxRetries) {
                         try {
-                            def output = bat(script: 'adb shell getprop sys.boot_completed', returnStdout: true).trim()
+                            def output = bat(script: '"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" shell getprop sys.boot_completed', returnStdout: true).trim()
                             if (output == '1') {
                                 booted = true
                                 echo 'Emulator booted successfully.'
@@ -56,11 +68,12 @@ pipeline {
             }
         }
 
+        // Etapa para Verificar se o Emulador Está Rodando
         stage('Verify Emulator is Running') {
             steps {
                 echo 'Verifying if the emulator is running'
                 bat '''
-                    adb devices | findstr "emulator" > nul
+                    "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" devices | findstr "emulator" > nul
                     if errorlevel 1 (
                         echo Emulator is not running!
                         exit /b 1
@@ -71,10 +84,11 @@ pipeline {
             }
         }
 
+        // Etapa para Parar o Emulador
         stage('Stop Emulator') {
             steps {
                 echo 'Stopping Android Emulator'
-                bat 'adb emu kill'
+                bat '"C:\\Users\\maico\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe" emu kill'
                 echo 'Emulator stopped'
             }
         }
