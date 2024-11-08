@@ -6,6 +6,7 @@ pipeline {
         PATH = "${env.ANDROID_HOME}\\tools;${env.ANDROID_HOME}\\platform-tools;${env.PATH}"
         AVD_NAME = "Galaxy_A22_5G_API_33_-_Local" // cmd emulator -list-avds
         GRADLE_USER_HOME = "${env.WORKSPACE}\\.gradle"
+        APK_OUTPUT_DIR = "C:\\ApksGenerated"
     }
 
     stages {
@@ -23,15 +24,15 @@ pipeline {
             steps {
                 echo 'Creating destination folder apk-outputs within the workspace if it does not exist.'
                 bat 'if not exist apk-outputs mkdir apk-outputs'
-                echo 'Creating external folder C:\\ApksGenerated if it does not exist.'
-                bat 'if not exist C:\\ApksGenerated mkdir C:\\ApksGenerated'
+                echo "Creating external folder ${env.APK_OUTPUT_DIR} if it does not exist."
+                bat "if not exist \"${env.APK_OUTPUT_DIR}\" mkdir \"${env.APK_OUTPUT_DIR}\""
             }
         }
 
         stage('Clean Folder C:\\ApksGenerated') {
             steps {
-                echo 'Cleaning C:\\ApksGenerated folder before copying the new APK.'
-                bat 'del /Q "C:\\ApksGenerated\\*"'
+                echo "Cleaning ${env.APK_OUTPUT_DIR} folder before copying the new APK."
+                bat "del /Q \"${env.APK_OUTPUT_DIR}\\*\""
             }
         }
 
@@ -105,6 +106,37 @@ pipeline {
                         adb shell settings put global animator_duration_scale 0
                     """
                     echo 'Emulator started and configured'
+                }
+            }
+        }
+
+        stage('Wait for Emulator to Boot') {
+            steps {
+                script {
+                    echo 'Waiting for emulator to fully boot'
+                    def booted = false
+                    def maxRetries = 30
+                    def retries = 0
+                    while (!booted && retries < maxRetries) {
+                        try {
+                            def output = bat(script: 'adb shell getprop sys.boot_completed', returnStdout: true).trim()
+                            if (output == '1') {
+                                booted = true
+                                echo 'Emulator booted successfully.'
+                            } else {
+                                echo 'Emulator not yet booted. Waiting...'
+                                sleep time: 10, unit: 'SECONDS'
+                                retries++
+                            }
+                        } catch (e) {
+                            echo 'Error checking boot status. Waiting...'
+                            sleep time: 10, unit: 'SECONDS'
+                            retries++
+                        }
+                    }
+                    if (!booted) {
+                        error 'Emulator failed to boot within the expected time.'
+                    }
                 }
             }
         }
