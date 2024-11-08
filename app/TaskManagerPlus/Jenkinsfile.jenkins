@@ -45,10 +45,11 @@ pipeline {
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'
-                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug --info'
+                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug copyAndRenameDebugApk --info'
                 echo 'Build Aplicativo concluído com sucesso'
             }
         }
+
 
         stage('Verificar APK Gerado') {
                     steps {
@@ -126,8 +127,8 @@ pipeline {
 
     post {
         success {
-            // Armazena o APK de debug como artefato
-            archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/debug/app-debug.apk', allowEmptyArchive: false
+            // Armazena o APK de debug da nova pasta como artefato
+            archiveArtifacts artifacts: 'C:\\ApksGerados\\TaskManagerPlus-debug.apk', allowEmptyArchive: false
 
             // Armazena o APK de release não assinado como artefato
             archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
@@ -139,4 +140,5 @@ pipeline {
             echo 'Pipeline concluída'
         }
     }
+
 }
