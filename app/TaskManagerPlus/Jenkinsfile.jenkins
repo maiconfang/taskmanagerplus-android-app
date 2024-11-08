@@ -28,6 +28,13 @@ pipeline {
             }
         }
 
+        stage('Limpar Pasta C:\\ApksGenerated') {
+            steps {
+                echo 'Limpando a pasta C:\\ApksGenerated antes de copiar o novo APK.'
+                bat 'del /Q "C:\\ApksGenerated\\*"'
+            }
+        }
+
         stage('Build Aplicativo') {
             steps {
                 echo 'Iniciando a etapa de Build Aplicativo'
@@ -60,8 +67,12 @@ pipeline {
 
         stage('Copiar APK para C:\\ApksGenerated') {
             steps {
-                echo 'Copiando APK para a pasta C:\\ApksGenerated'
-                bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug.apk"'
+                script {
+                    def timestamp = new Date().format("yyyyMMdd-HHmmss")
+                    bat """
+                        copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
+                    """
+                }
             }
         }
 
