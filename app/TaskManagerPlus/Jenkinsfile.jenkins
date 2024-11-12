@@ -60,13 +60,6 @@ pipeline {
             }
         }
 
-        stage('Copy APK to apk-outputs') {
-            steps {
-                echo 'Copying APK to the apk-outputs folder within the workspace'
-                bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug.apk"'
-            }
-        }
-
         stage('Copy APK to C:\\ApksGenerated') {
             steps {
                 script {
