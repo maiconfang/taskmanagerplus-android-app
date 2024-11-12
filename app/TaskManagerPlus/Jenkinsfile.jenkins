@@ -36,64 +36,15 @@ pipeline {
             }
         }
 
-        stage('Build Application') {
-            steps {
-                echo 'Building Application'
-                bat 'cd app\\TaskManagerPlus && .\\gradlew.bat clean assembleDebug --info'
-                echo 'Build completed successfully'
-            }
-        }
-
-        stage('Verify Generated APK') {
-            steps {
-                echo 'Verifying generated APK'
-                bat 'dir app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug'
-                bat '''
-                    if exist app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk (
-                        echo APK generated successfully.
-                    ) else (
-                        echo APK NOT found!
-                        exit /b 1
-                    )
-                '''
-            }
-        }
-
-        stage('Copy APK to apk-outputs') {
-            steps {
-                echo 'Copying APK to apk-outputs'
-                bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug.apk"'
-            }
-        }
-
-        stage('Copy APK to C:\\ApksGenerated') {
-            steps {
-                script {
-                    def timestamp = new Date().format("dd-MM-yyyy_HH-mm-ss")
-                    echo "Timestamp for APK: ${timestamp}"
-                    bat """
-                        copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
-                    """
-                }
-            }
-        }
-
-        stage('Restart ADB') {
-            steps {
-                echo 'Restarting ADB server to ensure clean start'
-                bat 'adb kill-server'
-                bat 'adb start-server'
-            }
-        }
-
         stage('Start Emulator') {
             steps {
                 script {
-                    echo 'Starting Android emulator'
+                    echo 'Starting Android emulator with wipe data'
                     bat """
-                        start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect
+                        start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -wipe-data -no-window -no-audio -gpu swiftshader_indirect
                         "${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
                     """
+                    echo 'Emulator should now be started and configured with wiped data'
                 }
             }
         }
@@ -128,48 +79,6 @@ pipeline {
                 }
             }
         }
-
-stage('Uninstall Existing APK') {
-    steps {
-        echo 'Uninstalling existing APK to avoid INSTALL_FAILED_UPDATE_INCOMPATIBLE error'
-        script {
-            def uninstallSuccess = false
-            int maxRetries = 3
-            int retry = 0
-
-            while (!uninstallSuccess && retry < maxRetries) {
-                echo "Attempt ${retry + 1} to uninstall existing APK..."
-                
-                bat """
-                    adb shell pm list packages | findstr "${env.APP_PACKAGE}" > nul
-                    if errorlevel 0 (
-                        adb shell am force-stop "${env.APP_PACKAGE}"
-                        adb shell pm clear "${env.APP_PACKAGE}"
-                        adb uninstall "${env.APP_PACKAGE}"
-                    ) else (
-                        echo "No existing APK found. Proceeding with installation."
-                    )
-                """
-
-                // Verifica se a desinstalação foi bem-sucedida
-                def checkUninstall = bat(script: "adb shell pm list packages | findstr \"${env.APP_PACKAGE}\"", returnStatus: true)
-                if (checkUninstall != 0) {
-                    echo "APK uninstalled successfully."
-                    uninstallSuccess = true
-                } else {
-                    echo "Failed to uninstall APK, retrying..."
-                    retry++
-                    sleep time: 5, unit: 'SECONDS'
-                }
-            }
-
-            if (!uninstallSuccess) {
-                error "Failed to uninstall the APK after ${maxRetries} attempts."
-            }
-        }
-    }
-}
-
 
         stage('Install APK on Emulator') {
             steps {
