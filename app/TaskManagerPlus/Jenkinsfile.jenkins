@@ -21,20 +21,6 @@ pipeline {
             }
         }
 
-        stage('Prepare Destination Folders') {
-            steps {
-                echo 'Creating destination folders if not existing.'
-                bat 'if not exist apk-outputs mkdir apk-outputs'
-                bat "if not exist \"${env.APK_OUTPUT_DIR}\" mkdir \"${env.APK_OUTPUT_DIR}\""
-            }
-        }
-
-        stage('Clean Folder C:\\ApksGenerated') {
-            steps {
-                echo "Cleaning ${env.APK_OUTPUT_DIR} before copying the new APK."
-                bat "del /Q \"${env.APK_OUTPUT_DIR}\\*\""
-            }
-        }
 
         stage('Start Emulator') {
             steps {
