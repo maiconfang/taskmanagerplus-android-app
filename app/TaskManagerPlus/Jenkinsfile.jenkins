@@ -129,9 +129,17 @@ pipeline {
             }
         }
 
-        stage('Uninstall Existing APK') {
-            steps {
-                echo 'Uninstalling existing APK'
+stage('Uninstall Existing APK') {
+    steps {
+        echo 'Uninstalling existing APK to avoid INSTALL_FAILED_UPDATE_INCOMPATIBLE error'
+        script {
+            def uninstallSuccess = false
+            int maxRetries = 3
+            int retry = 0
+
+            while (!uninstallSuccess && retry < maxRetries) {
+                echo "Attempt ${retry + 1} to uninstall existing APK..."
+                
                 bat """
                     adb shell pm list packages | findstr "${env.APP_PACKAGE}" > nul
                     if errorlevel 0 (
@@ -142,8 +150,26 @@ pipeline {
                         echo "No existing APK found. Proceeding with installation."
                     )
                 """
+
+                // Verifica se a desinstalação foi bem-sucedida
+                def checkUninstall = bat(script: "adb shell pm list packages | findstr \"${env.APP_PACKAGE}\"", returnStatus: true)
+                if (checkUninstall != 0) {
+                    echo "APK uninstalled successfully."
+                    uninstallSuccess = true
+                } else {
+                    echo "Failed to uninstall APK, retrying..."
+                    retry++
+                    sleep time: 5, unit: 'SECONDS'
+                }
+            }
+
+            if (!uninstallSuccess) {
+                error "Failed to uninstall the APK after ${maxRetries} attempts."
             }
         }
+    }
+}
+
 
         stage('Install APK on Emulator') {
             steps {
