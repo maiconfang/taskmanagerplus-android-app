@@ -25,6 +25,13 @@ pipeline {
             }
         }
 
+        stage('Install APK on Emulator') {
+            steps {
+                echo 'Installing APK on emulator'
+                bat 'adb install -r apk-outputs\\TaskManagerPlus-debug.apk'
+            }
+        }
+
         stage('Verify Installed APK') {
             steps {
                 echo 'Checking if the app is already installed on the emulator'
