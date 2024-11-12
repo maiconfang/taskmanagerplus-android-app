@@ -5,8 +5,7 @@ pipeline {
         ANDROID_HOME = "C:\\Users\\maico\\AppData\\Local\\Android\\Sdk"
         PATH = "${env.ANDROID_HOME}\\tools;${env.ANDROID_HOME}\\platform-tools;${env.PATH}"
         AVD_NAME = "Galaxy_A22_5G_API_33_-_Local"
-        GRADLE_USER_HOME = "${env.WORKSPACE}\\.gradle"
-        APK_OUTPUT_DIR = "C:\\ApksGenerated"
+        GRADLE_USER_HOME = "${env.WORKSPACE}\\.gradle"        
         APP_PACKAGE = "maif.taskmanagerplus"
     }
 
@@ -124,6 +123,14 @@ pipeline {
             }
         }
 
+
+
+		stage('Copy APK to apk-outputs') {
+			steps {
+				echo 'Copying APK to the apk-outputs folder within the workspace'
+				bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug.apk"'
+			}
+		}
 
 
         stage('Verify APK in New Folder (apk-outputs)') {
