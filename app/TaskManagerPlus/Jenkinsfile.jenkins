@@ -87,12 +87,15 @@ pipeline {
             }
         }
 
-        stage('Verify Installed APK') {
-            steps {
-                echo 'Checking if APK is installed on emulator'
-                bat 'adb shell pm list packages | findstr "${env.APP_PACKAGE}"'
-            }
-        }
+		stage('Verify Installed APK') {
+			steps {
+				echo 'Checking if APK is installed on emulator'
+				bat """
+					adb shell pm list packages | findstr "${env.APP_PACKAGE}"
+				"""
+			}
+		}
+
 
         stage('Run Tests') {
             steps {
