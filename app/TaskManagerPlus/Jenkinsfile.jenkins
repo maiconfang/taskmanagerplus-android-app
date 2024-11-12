@@ -25,6 +25,22 @@ pipeline {
             }
         }
 
+        // Etapa para desinstalar APK existente
+        stage('Uninstall Existing APK') {
+            steps {
+                echo 'Uninstalling existing APK to avoid INSTALL_FAILED_UPDATE_INCOMPATIBLE error'
+                bat """
+                    adb shell pm list packages | findstr "${env.APP_PACKAGE}" > nul
+                    if errorlevel 0 (
+                        adb shell pm clear "${env.APP_PACKAGE}"
+                        adb uninstall "${env.APP_PACKAGE}"
+                    ) else (
+                        echo "No existing APK found. Proceeding with installation."
+                    )
+                """
+            }
+        }
+
         stage('Install APK on Emulator') {
             steps {
                 echo 'Installing APK on emulator'
