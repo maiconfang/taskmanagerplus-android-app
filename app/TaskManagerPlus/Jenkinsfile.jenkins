@@ -138,24 +138,7 @@ pipeline {
             }
         }
 
-        stage('Copy APK to apk-outputs') {
-            steps {
-                echo 'Copying APK to the apk-outputs folder within the workspace'
-                bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug.apk"'
-            }
-        }
 
-        stage('Copy APK to C:\\ApksGenerated') {
-            steps {
-                script {
-                    def timestamp = new Date().format("dd-MM-yyyy_HH-mm-ss")
-                    echo "Timestamp for APK: ${timestamp}"
-                    bat """
-                        copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
-                    """
-                }
-            }
-        }
 
         stage('Verify APK in New Folder (apk-outputs)') {
             steps {
