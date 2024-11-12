@@ -59,19 +59,21 @@ pipeline {
                 '''
             }
         }
-
-        stage('Copy APK to C:\\ApksGenerated') {
-            steps {
-                script {
-                    def timestamp = new Date().format("dd-MM-yyyy_HH-mm-ss")
-                    echo "Timestamp for APK: ${timestamp}"
-                    bat """
-                        copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
-                    """
-                }
-            }
-        }
-
+		
+	
+		stage('Copy APK to C:\\ApksGenerated') {
+			steps {
+				script {
+					def timestamp = new Date().format("dd-MM-yyyy_HH-mm-ss")
+					echo "Copying APK to C:\\ApksGenerated with timestamp ${timestamp}"
+					bat """
+						copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
+					"""
+					// Defina o caminho completo do APK com timestamp para uso posterior
+					env.APK_PATH = "C:\\ApksGenerated\\TaskManagerPlus-debug-${timestamp}.apk"
+				}
+			}
+		}
 
         stage('Start Emulator') {
             steps {
@@ -117,12 +119,12 @@ pipeline {
             }
         }
 
-        stage('Install APK on Emulator') {
-            steps {
-                echo 'Installing APK on emulator'
-                bat 'adb install -r apk-outputs\\TaskManagerPlus-debug.apk'
-            }
-        }
+		stage('Install APK on Emulator') {
+			steps {
+				echo "Installing APK on emulator from ${env.APK_PATH}"
+				bat "adb install -r \"${env.APK_PATH}\""
+			}
+		}
 
 		stage('Verify Installed APK') {
 			steps {
