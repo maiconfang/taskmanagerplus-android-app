@@ -11,6 +11,7 @@ pipeline {
     }
 
     stages {
+		// Checkout code from the Git repository
         stage('Checkout') {
             steps {
                 echo 'Starting Checkout stage'
@@ -21,6 +22,7 @@ pipeline {
             }
         }
 		
+		// Prepare folders for storing APKs
 		stage('Prepare Destination Folders') {
             steps {
                 echo 'Creating destination folder apk-outputs within the workspace if it does not exist.'
@@ -30,6 +32,7 @@ pipeline {
             }
         }
 
+		// Clean the C:\ApksGenerated folder before storing new APK
         stage('Clean Folder C:\\ApksGenerated') {
             steps {
                 echo "Cleaning ${env.APK_OUTPUT_DIR} folder before copying the new APK."
@@ -37,6 +40,7 @@ pipeline {
             }
         }
 
+		// Build the debug APK
         stage('Build Application') {
             steps {
                 echo 'Starting Build Application stage'
@@ -45,6 +49,7 @@ pipeline {
             }
         }
 
+		// Verify if the debug APK was generated
         stage('Verify Generated APK') {
             steps {
                 echo 'Verifying if the APK was generated in the expected folder:'
@@ -60,7 +65,7 @@ pipeline {
             }
         }
 		
-	
+	// Copy the generated APK to C:\ApksGenerated with a timestamp
 		stage('Copy APK to C:\\ApksGenerated') {
 			steps {
 				script {
@@ -75,6 +80,8 @@ pipeline {
 			}
 		}
 
+
+		// Start the Android emulator with a data wipe
         stage('Start Emulator') {
             steps {
                 script {
@@ -88,6 +95,7 @@ pipeline {
             }
         }
 
+		// Wait for the emulator to finish booting
         stage('Wait for Emulator to Boot') {
             steps {
                 script {
@@ -119,6 +127,7 @@ pipeline {
             }
         }
 
+		// Install the generated APK on the emulator
 		stage('Install APK on Emulator') {
 			steps {
 				echo "Installing APK on emulator from ${env.APK_PATH}"
@@ -126,6 +135,7 @@ pipeline {
 			}
 		}
 
+		// Verify if the APK is installed on the emulator
 		stage('Verify Installed APK') {
 			steps {
 				echo 'Checking if APK is installed on emulator'
@@ -135,7 +145,7 @@ pipeline {
 			}
 		}
 
-
+		// Run automated tests on the installed APK
         stage('Run Tests') {
             steps {
                 echo 'Running Automated Tests'
@@ -144,6 +154,7 @@ pipeline {
             }
         }
 
+		// Publish the test report as an HTML file
         stage('Publish Test Report (HTML)') {
             steps {
                 echo 'Publishing HTML Test Report'
@@ -159,6 +170,7 @@ pipeline {
             }
         }
 
+		// Build the release APK for deployment
         stage('Build APK Release') {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -170,6 +182,7 @@ pipeline {
             }
         }
 
+		// Verify if the release APK was generated
         stage('Verify Generated APK Release') {
             steps {
                 echo 'Verifying release APK'
@@ -178,15 +191,23 @@ pipeline {
         }
 
 
-
+		// Copy the APK to a workspace folder for archiving with a timestamp
 		stage('Copy APK to apk-outputs') {
 			steps {
-				echo 'Copying APK to the apk-outputs folder within the workspace'
-				bat 'copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug.apk"'
+				script {
+					def timestamp = new Date().format("dd-MM-yyyy_HH-mm-ss")
+					echo "Copying APK to the apk-outputs folder within the workspace with timestamp ${timestamp}"
+					bat """
+						copy "app\\TaskManagerPlus\\app\\build\\outputs\\apk\\debug\\app-debug.apk" "apk-outputs\\TaskManagerPlus-debug-${timestamp}.apk"
+					"""
+					// Sets the full APK path with timestamp for later use
+					env.APK_PATH_WORKSPACE = "apk-outputs\\TaskManagerPlus-debug-${timestamp}.apk"
+				}
 			}
 		}
 
 
+		// Verify if the APK is in the apk-outputs folder
         stage('Verify APK in New Folder (apk-outputs)') {
             steps {
                 echo 'Verifying if the APK was copied to the apk-outputs folder'
@@ -202,6 +223,7 @@ pipeline {
             }
         }
 
+		// Stop the Android emulator after testing
         stage('Stop Emulator') {
             steps {
                 echo 'Stopping Emulator'
@@ -212,7 +234,8 @@ pipeline {
     }
 
     post {
-        success {
+        success {			
+			
             archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug.apk', allowEmptyArchive: false
             archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
         }
