@@ -85,7 +85,7 @@ pipeline {
 stage('Start Emulator') {
     steps {
         script {
-            // Verifica se o emulador está em execução
+            // Check if the emulator is running
             def emulatorStatus = bat(script: "${env.ANDROID_HOME}\\platform-tools\\adb.exe devices", returnStdout: true)
 
             if (!emulatorStatus.contains("emulator")) {
@@ -94,7 +94,7 @@ stage('Start Emulator') {
                     start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect 
                     "${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
                 """
-                // Aguarda um tempo para garantir que o emulador inicialize completamente
+                // Wait for a while to ensure the emulator initializes completely
                 sleep(time: 60, unit: 'SECONDS')
                 echo 'Emulator started and configured with wiped data'
             } else {
@@ -258,17 +258,18 @@ stage('Verify APK in New Folder (apk-outputs)') {
         }
     }
 
-    post {
-        success {			
-			
-            archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug.apk', allowEmptyArchive: false
-            archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
-        }
-        failure {
-            echo 'Build failed. No APK generated due to test failures.'
-        }
-        always {
-            echo 'Pipeline completed'
-        }
+post {
+    success {
+        // Uses a wildcard to find any APK that starts with "TaskManagerPlus-debug"
+        archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug-*.apk', allowEmptyArchive: false
+        archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
     }
+    failure {
+        echo 'Build failed. No APK generated due to test failures.'
+    }
+    always {
+        echo 'Pipeline completed'
+    }
+}
+
 }
