@@ -144,6 +144,16 @@ pipeline {
 				"""
 			}
 		}
+		
+		stage('Prepare Environment') {
+			steps {
+				echo 'Disabling animations on the emulator'
+				// Desativa as animações no emulador para evitar interferência nos testes
+				bat 'adb shell settings put global window_animation_scale 0'
+				bat 'adb shell settings put global transition_animation_scale 0'
+				bat 'adb shell settings put global animator_duration_scale 0'
+			}
+		}
 
 		// Run automated tests on the installed APK
         stage('Run Tests') {
