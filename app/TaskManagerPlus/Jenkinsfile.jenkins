@@ -81,19 +81,29 @@ pipeline {
 		}
 
 
-		// Start the Android emulator with a data wipe
-        stage('Start Emulator') {
-            steps {
-                script {
-                    echo 'Starting Android emulator with wipe data'
-                    bat """
-                        start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect
-                        "${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
-                    """
-                    echo 'Emulator should now be started and configured with wiped data'
-                }
+// Start the Android emulator with a data wipe only if not already running
+stage('Start Emulator') {
+    steps {
+        script {
+            // Verifica se o emulador está em execução
+            def emulatorStatus = bat(script: "${env.ANDROID_HOME}\\platform-tools\\adb.exe devices", returnStdout: true)
+
+            if (!emulatorStatus.contains("emulator")) {
+                echo 'Emulator not running. Starting Android emulator with wiped data...'
+                bat """
+                    start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect 
+                    "${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
+                """
+                // Aguarda um tempo para garantir que o emulador inicialize completamente
+                sleep(time: 60, unit: 'SECONDS')
+                echo 'Emulator started and configured with wiped data'
+            } else {
+                echo 'Emulator is already running.'
             }
         }
+    }
+}
+
 
 		// Wait for the emulator to finish booting
         stage('Wait for Emulator to Boot') {
