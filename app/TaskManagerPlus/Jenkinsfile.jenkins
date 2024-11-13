@@ -226,26 +226,34 @@ pipeline {
 			}
 		}
 
+		// Removes old APK files from apk-outputs to prepare for new build
+		stage('Clean APK Outputs') {
+			steps {
+				echo 'Cleaning old APK files from apk-outputs folder'
+				bat 'del /Q apk-outputs\\*'
+			}
+		}
+
 
 		// Verify if the APK is in the apk-outputs folder
-stage('Verify APK in New Folder (apk-outputs)') {
-    steps {
-        echo 'Verifying if the APK was copied to the apk-outputs folder'
-        bat 'dir apk-outputs'
-        bat '''
-            set apkFound=false
-            for %%f in (apk-outputs\\TaskManagerPlus-debug-*.apk) do (
-                set apkFound=true
-                echo APK found: %%f
-                goto :EOF
-            )
-            if not %apkFound% (
-                echo APK NOT found in the apk-outputs folder!
-                exit /b 1
-            )
-        '''
-    }
-}
+		stage('Verify APK in New Folder (apk-outputs)') {
+			steps {
+				echo 'Verifying if the APK was copied to the apk-outputs folder'
+				bat 'dir apk-outputs'
+				bat '''
+					set apkFound=false
+					for %%f in (apk-outputs\\TaskManagerPlus-debug-*.apk) do (
+						set apkFound=true
+						echo APK found: %%f
+						goto :EOF
+					)
+					if not %apkFound% (
+						echo APK NOT found in the apk-outputs folder!
+						exit /b 1
+					)
+				'''
+			}
+		}
 
 
 		// Stop the Android emulator after testing
