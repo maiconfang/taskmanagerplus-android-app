@@ -81,28 +81,28 @@ pipeline {
 		}
 
 
-// Start the Android emulator with a data wipe only if not already running
-stage('Start Emulator') {
-    steps {
-        script {
-            // Check if the emulator is running
-            def emulatorStatus = bat(script: "${env.ANDROID_HOME}\\platform-tools\\adb.exe devices", returnStdout: true)
+		// Start the Android emulator with a data wipe only if not already running
+		stage('Start Emulator') {
+			steps {
+				script {
+					// Check if the emulator is running
+					def emulatorStatus = bat(script: "${env.ANDROID_HOME}\\platform-tools\\adb.exe devices", returnStdout: true)
 
-            if (!emulatorStatus.contains("emulator")) {
-                echo 'Emulator not running. Starting Android emulator with wiped data...'
-                bat """
-                    start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect 
-                    "${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
-                """
-                // Wait for a while to ensure the emulator initializes completely
-                sleep(time: 60, unit: 'SECONDS')
-                echo 'Emulator started and configured with wiped data'
-            } else {
-                echo 'Emulator is already running.'
-            }
-        }
-    }
-}
+					if (!emulatorStatus.contains("emulator")) {
+						echo 'Emulator not running. Starting Android emulator with wiped data...'
+						bat """
+							start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect 
+							"${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
+						"""
+						// Wait for a while to ensure the emulator initializes completely
+						sleep(time: 60, unit: 'SECONDS')
+						echo 'Emulator started and configured with wiped data'
+					} else {
+						echo 'Emulator is already running.'
+					}
+				}
+			}
+		}
 
 
 		// Wait for the emulator to finish booting
@@ -258,18 +258,18 @@ stage('Verify APK in New Folder (apk-outputs)') {
         }
     }
 
-post {
-    success {
-        // Uses a wildcard to find any APK that starts with "TaskManagerPlus-debug"
-        archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug-*.apk', allowEmptyArchive: false
-        archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
-    }
-    failure {
-        echo 'Build failed. No APK generated due to test failures.'
-    }
-    always {
-        echo 'Pipeline completed'
-    }
-}
+	post {
+		success {
+			// Uses a wildcard to find any APK that starts with "TaskManagerPlus-debug"
+			archiveArtifacts artifacts: 'apk-outputs/TaskManagerPlus-debug-*.apk', allowEmptyArchive: false
+			archiveArtifacts artifacts: 'app/TaskManagerPlus/app/build/outputs/apk/release/app-release-unsigned.apk', allowEmptyArchive: false
+		}
+		failure {
+			echo 'Build failed. No APK generated due to test failures.'
+		}
+		always {
+			echo 'Pipeline completed'
+		}
+	}
 
 }
