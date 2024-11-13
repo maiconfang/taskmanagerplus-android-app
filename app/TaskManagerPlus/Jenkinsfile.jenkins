@@ -65,7 +65,7 @@ pipeline {
             }
         }
 		
-	// Copy the generated APK to C:\ApksGenerated with a timestamp
+		// Copy the generated APK to C:\ApksGenerated with a timestamp
 		stage('Copy APK to C:\\ApksGenerated') {
 			steps {
 				script {
@@ -210,6 +210,13 @@ pipeline {
             }
         }
 
+		// Clean old APKs from apk-outputs before copying new APK
+		stage('Clean APK Outputs') {
+			steps {
+				echo 'Cleaning old APK files from apk-outputs folder'
+				bat 'del /Q apk-outputs\\*'
+			}
+		}
 
 		// Copy the APK to a workspace folder for archiving with a timestamp
 		stage('Copy APK to apk-outputs') {
@@ -223,14 +230,6 @@ pipeline {
 					// Sets the full APK path with timestamp for later use
 					env.APK_PATH_WORKSPACE = "apk-outputs\\TaskManagerPlus-debug-${timestamp}.apk"
 				}
-			}
-		}
-
-		// Removes old APK files from apk-outputs to prepare for new build
-		stage('Clean APK Outputs') {
-			steps {
-				echo 'Cleaning old APK files from apk-outputs folder'
-				bat 'del /Q apk-outputs\\*'
 			}
 		}
 
