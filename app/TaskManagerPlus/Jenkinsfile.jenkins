@@ -228,20 +228,25 @@ stage('Start Emulator') {
 
 
 		// Verify if the APK is in the apk-outputs folder
-        stage('Verify APK in New Folder (apk-outputs)') {
-            steps {
-                echo 'Verifying if the APK was copied to the apk-outputs folder'
-                bat 'dir apk-outputs'
-                bat '''
-                    if exist apk-outputs\\TaskManagerPlus-debug.apk (
-                        echo APK copied successfully to apk-outputs.
-                    ) else (
-                        echo APK NOT found in the apk-outputs folder!
-                        exit /b 1
-                    )
-                '''
-            }
-        }
+stage('Verify APK in New Folder (apk-outputs)') {
+    steps {
+        echo 'Verifying if the APK was copied to the apk-outputs folder'
+        bat 'dir apk-outputs'
+        bat '''
+            set apkFound=false
+            for %%f in (apk-outputs\\TaskManagerPlus-debug-*.apk) do (
+                set apkFound=true
+                echo APK found: %%f
+                goto :EOF
+            )
+            if not %apkFound% (
+                echo APK NOT found in the apk-outputs folder!
+                exit /b 1
+            )
+        '''
+    }
+}
+
 
 		// Stop the Android emulator after testing
         stage('Stop Emulator') {
