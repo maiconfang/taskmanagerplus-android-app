@@ -87,7 +87,7 @@ pipeline {
                 script {
                     echo 'Starting Android emulator with wipe data'
                     bat """
-                        start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -wipe-data -no-window -no-audio -gpu swiftshader_indirect
+                        start "Emulator" "${env.ANDROID_HOME}\\emulator\\emulator.exe" -avd "${env.AVD_NAME}" -no-window -no-audio -gpu swiftshader_indirect
                         "${env.ANDROID_HOME}\\platform-tools\\adb.exe" wait-for-device
                     """
                     echo 'Emulator should now be started and configured with wiped data'
