@@ -65,7 +65,7 @@ pipeline {
             }
         }
 		
-		// Copy the generated APK to C:\ApksGenerated with a timestamp 
+		// Copy the generated APK to C:\ApksGenerated with a timestamp
 		stage('Copy APK to C:\\ApksGenerated') {
 			steps {
 				script {
