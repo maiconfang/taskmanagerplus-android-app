@@ -22,7 +22,7 @@ pipeline {
             }
         }
 		
-		// Prepare folders for storing APKs 
+		// Prepare folders for storing APKs
 		stage('Prepare Destination Folders') {
             steps {
                 echo 'Creating destination folder apk-outputs within the workspace if it does not exist.'
