@@ -11,7 +11,7 @@ pipeline {
     }
 
     stages {
-		// Checkout code from the Git repository
+		// Checkout code from the Git repository 
         stage('Checkout') {
             steps {
                 echo 'Starting Checkout stage'
