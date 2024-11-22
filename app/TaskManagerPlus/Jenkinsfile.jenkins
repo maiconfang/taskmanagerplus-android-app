@@ -17,7 +17,7 @@ pipeline {
                 echo 'Starting Checkout stage'
                 git branch: 'main',
                     url: 'https://github.com/maiconfang/taskmanagerplus-android-app.git',
-                    credentialsId: 'github-pat-global'
+                    credentialsId: 'github-pat-global-video'
                 echo 'Checkout completed successfully'
             }
         }
